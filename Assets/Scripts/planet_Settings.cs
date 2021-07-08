@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class planet_Settings : MonoBehaviour {
+public class PlanetSettings : MonoBehaviour {
 
     public Transform player;
     public Color colour;

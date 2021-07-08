@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class playerIdentify : MonoBehaviour {
+public class PlayerIdentify : MonoBehaviour {
 
     Ray planetCheck;
     RaycastHit planetFound;
@@ -36,7 +36,7 @@ public class playerIdentify : MonoBehaviour {
         {
             if (planetFound.collider.tag == "Planet")
             {
-                if (planetFound.collider.GetComponent<planetInfo>() != null)
+                if (planetFound.collider.GetComponent<PlanetSettings>() != null)
                 {
 
                 }

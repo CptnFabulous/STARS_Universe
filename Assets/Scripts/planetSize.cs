@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class planetSize : MonoBehaviour {
+public class PlanetSize : MonoBehaviour {
 
     public Transform player;
     public float size = 1000;

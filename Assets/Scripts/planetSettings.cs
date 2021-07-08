@@ -11,14 +11,16 @@ public class planetSettings : MonoBehaviour
     float playerDistance;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         GetComponent<Renderer>().material.color = colour;
     }
 
+    /*
     // Update is called once per frame
     void Update()
     {
         playerDistance = Vector3.Distance(player.position, transform.position);
     }
+    */
 }
