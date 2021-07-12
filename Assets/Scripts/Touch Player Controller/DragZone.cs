@@ -11,7 +11,11 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 {
     Image i;
     RectTransform rt;
+    Canvas c;
+    RectTransform crt;
 
+    [Tooltip("If null, values are given in screen space")]
+    public Camera viewingCamera;
     public Color defaultColour = Color.white;
     public Color pressedColour = Color.gray;
     public UnityEvent onDown;
@@ -30,16 +34,45 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         return DragCurrentPosition - DownPosition;
     }
 
+
+
+
+    /*
+    Vector2 CanvasScaleFactors()
+    {
+        // Multiply/divide canvas rect width and height in relation to the screen width and height
+        return new Vector2(crt.rect.width * Screen.width, crt.rect.height * Screen.height);
+    }
+
+    Vector2 ProcessScreenSpaceValues(Vector2 screenPosition, bool convertToCanvasSpace)
+    {
+        if (convertToCanvasSpace == true)
+        {
+            screenPosition = screenPosition * CanvasScaleFactors();
+        }
+        return screenPosition;
+    }
+    */
+
+
+
     void Awake()
     {
         i = GetComponent<Image>();
         rt = GetComponent<RectTransform>();
+        c = rt.GetComponentInParent<Canvas>();
+        crt = c.GetComponent<RectTransform>();
+
         i.color = defaultColour;
+
+        Debug.Log(new Vector2(crt.rect.width, crt.rect.height) + ", " + new Vector2(Screen.width, Screen.height) + ", " + new Vector2(crt.rect.width * Screen.width, crt.rect.height * Screen.height));
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         IsPressed = true;
+
+        // Determine position
         DownPosition = eventData.position;
 
         DragCurrentPosition = eventData.position;
@@ -67,5 +100,5 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         i.color = defaultColour;
     }
 
-
+    
 }
