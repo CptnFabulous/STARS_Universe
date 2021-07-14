@@ -5,22 +5,30 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
+
+
+
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(Image))]
 public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    public bool giveValuesInScreenSpace;
+    public Color defaultColour = Color.white;
+    public Color pressedColour = Color.gray;
+    public UnityEvent onDown;
+    public UnityEvent onUp;
+
+    // References so stuff works properly
     Image i;
     RectTransform rt;
     Canvas c;
     RectTransform crt;
 
-    [Tooltip("If null, values are given in screen space")]
-    public Camera viewingCamera;
-    public Color defaultColour = Color.white;
-    public Color pressedColour = Color.gray;
-    public UnityEvent onDown;
-    public UnityEvent onUp;
-    
+    // Extra functionality to reset the delta position value because IDragHandler doesn't bloody do a simple thing like that
+    IEnumerator checkCoroutine;
+    WaitForEndOfFrame wait;
+    bool stopDragCheckBool;
+
     // Up and down data
     public Vector2 DownPosition { get; private set; }
     public Vector2 UpPosition { get; private set; }
@@ -34,28 +42,6 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         return DragCurrentPosition - DownPosition;
     }
 
-
-
-
-    /*
-    Vector2 CanvasScaleFactors()
-    {
-        // Multiply/divide canvas rect width and height in relation to the screen width and height
-        return new Vector2(crt.rect.width * Screen.width, crt.rect.height * Screen.height);
-    }
-
-    Vector2 ProcessScreenSpaceValues(Vector2 screenPosition, bool convertToCanvasSpace)
-    {
-        if (convertToCanvasSpace == true)
-        {
-            screenPosition = screenPosition * CanvasScaleFactors();
-        }
-        return screenPosition;
-    }
-    */
-
-
-
     void Awake()
     {
         i = GetComponent<Image>();
@@ -64,8 +50,6 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         crt = c.GetComponent<RectTransform>();
 
         i.color = defaultColour;
-
-        Debug.Log(new Vector2(crt.rect.width, crt.rect.height) + ", " + new Vector2(Screen.width, Screen.height) + ", " + new Vector2(crt.rect.width * Screen.width, crt.rect.height * Screen.height));
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -73,9 +57,9 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         IsPressed = true;
 
         // Determine position
-        DownPosition = eventData.position;
+        DownPosition = ProcessValues(eventData.position);
 
-        DragCurrentPosition = eventData.position;
+        DragCurrentPosition = ProcessValues(eventData.position);
         DragDeltaPosition = Vector2.zero;
 
         onDown.Invoke();
@@ -84,21 +68,51 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        DragCurrentPosition = eventData.position;
-        DragDeltaPosition = eventData.delta;
+        if (checkCoroutine == null)
+        {
+            checkCoroutine = CheckPlayerHasStoppedDragging();
+            StartCoroutine(checkCoroutine);
+        }
+
+        DragCurrentPosition = ProcessValues(eventData.position);
+        DragDeltaPosition = ProcessValues(eventData.delta);
+        stopDragCheckBool = true;
+    }
+
+    IEnumerator CheckPlayerHasStoppedDragging()
+    {
+        stopDragCheckBool = true;
+        while (stopDragCheckBool == true)
+        {
+            stopDragCheckBool = false;
+            yield return wait;
+        }
+        DragDeltaPosition = Vector2.zero;
+        checkCoroutine = null;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         IsPressed = false;
-        UpPosition = eventData.position;
+        UpPosition = ProcessValues(eventData.position);
 
-        DragCurrentPosition = eventData.position;
+        DragCurrentPosition = ProcessValues(eventData.position);
         DragDeltaPosition = Vector2.zero;
 
         onUp.Invoke();
         i.color = defaultColour;
     }
 
-    
+    Vector2 ProcessValues(Vector2 screenPosition)
+    {
+        if (giveValuesInScreenSpace == false)
+        {
+            // Multiply/divide canvas rect width and height in relation to the screen width and height, converting screen dimensions into canvas dimensions
+            float x = screenPosition.x / Screen.width * crt.rect.width;
+            float y = screenPosition.y / Screen.height * crt.rect.height;
+            screenPosition = new Vector2(x, y);
+        }
+        return screenPosition;
+    }
+
 }
