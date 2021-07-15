@@ -111,6 +111,8 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             float x = screenPosition.x / Screen.width * crt.rect.width;
             float y = screenPosition.y / Screen.height * crt.rect.height;
             screenPosition = new Vector2(x, y);
+
+            Debug.Log("CRT dimensions = " + new Vector2(crt.rect.width, crt.rect.height));
         }
         return screenPosition;
     }

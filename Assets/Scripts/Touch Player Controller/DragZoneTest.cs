@@ -43,7 +43,7 @@ public class DragZoneTest : MonoBehaviour
         //debugText.text = Misc.LogVector2Fine(pad.Input());
 
 
-        Debug.Log(zone.DragDeltaPosition);
+        //Debug.Log(zone.DragDeltaPosition);
         //inputValue += pad.Input();
         //debugText.text = Misc.LogVector2Fine(inputValue);
 
