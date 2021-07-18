@@ -26,6 +26,7 @@ public class PauseMenu : MonoBehaviour {
         */
     }
 	
+    /*
 	// Update is called once per frame
 	void Update ()
     {
@@ -39,28 +40,29 @@ public class PauseMenu : MonoBehaviour {
             Resume();
         }
     }
+    */
 
-    public void Pause ()
+    public void Pause()
     {
         Time.timeScale = 0.0f;
         player.GetComponent<playerMovement>().enabled = false;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        //Cursor.lockState = CursorLockMode.None;
+        //Cursor.visible = true;
         menu.enabled = true;
         isPaused = true;
     }
 
-    public void Resume ()
+    public void Resume()
     {
         Time.timeScale = 1.0f;
         player.GetComponent<playerMovement>().enabled = true;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
         menu.enabled = false;
         isPaused = false;
     }
 
-    public void Quit ()
+    public void Quit()
     {
         Application.Quit();
 
