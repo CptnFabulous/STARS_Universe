@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public PlayerMovementController controls;
-    
+    public PlayerMovementController Controls { get; private set; }
+    public GameStateHandler PauseHandler { get; private set; }
 
-
+    private void Awake()
+    {
+        Controls = GetComponent<PlayerMovementController>();
+        PauseHandler = GetComponent<GameStateHandler>();
+    }
 
     /*
     // Start is called before the first frame update
@@ -25,12 +29,6 @@ public class PlayerHandler : MonoBehaviour
 
 
 
-    public void PauseGame()
-    {
-        PauseMenu menu = GameObject.FindObjectOfType<PauseMenu>();
-
-        menu.Pause();
 
 
-    }
 }
