@@ -71,6 +71,11 @@ public class MenuHandler : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    public void ResetTime(float scale)
+    {
+        Time.timeScale = scale;
+    }
+
     public void QuitGame()
     {
         Application.Quit();

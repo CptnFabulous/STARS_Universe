@@ -27,8 +27,6 @@ public class GameStateHandler : MonoBehaviour
     public Button pauseButton;
     public Button resumeButton;
 
-
-
     private void Awake()
     {
         playerHandler = GetComponent<PlayerHandler>();
@@ -37,19 +35,11 @@ public class GameStateHandler : MonoBehaviour
 
     private void Start()
     {
+        // Adds listeners so the buttons work properly
         pauseButton.onClick.AddListener(PauseGame);
         resumeButton.onClick.AddListener(ResumeGame);
-
-        // Create GlobalPauseManager
-        GlobalPauseManager gpm = FindObjectOfType<GlobalPauseManager>();
-        if (gpm == null)
-        {
-            GameObject gpmObject = new GameObject("Global Pause Manager");
-            gpm = gpmObject.AddComponent<GlobalPauseManager>();
-        }
-
-        Debug.Log("Pause menu setup stuff done");
-
+        
+        // Pre-emptively resumes the game to ensure everything is set up correctly
         ResumeGame();
     }
 
@@ -65,30 +55,42 @@ public class GameStateHandler : MonoBehaviour
 
     public void PauseGame()
     {
-        //Debug.Log("Pausing game");
-        
         SwitchMenus(pauseMenu);
         playerHandler.Controls.enabled = false;
 
         CurrentState = PlayerState.InPauseMenu;
-        GlobalPauseManager cr = FindObjectOfType<GlobalPauseManager>();
-        cr.TimeCheckOnPause();
+
+        #region Time adjustment
+        // Checks all players to see if any of them are not paused
+        bool everybodyIsPaused = true;
+        PlayerHandler[] players = FindObjectsOfType<PlayerHandler>();
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i].PauseHandler.CurrentState != PlayerState.InPauseMenu)
+            {
+                everybodyIsPaused = false;
+                i = players.Length;
+            }
+        }
+
+        // If all players are paused
+        if (everybodyIsPaused == true)
+        {
+            // Pause time
+            Time.timeScale = 0;
+        }
+        #endregion
     }
 
     public void ResumeGame()
     {
-        //Debug.Log("Resuming game");
-
         SwitchMenus(headsUpDisplay);
         playerHandler.Controls.enabled = true;
 
         CurrentState = PlayerState.Active;
-        GlobalPauseManager cp = FindObjectOfType<GlobalPauseManager>();
-        cp.TimeCheckOnResume();
+
+        #region Time adjustment
+        Time.timeScale = 1;
+        #endregion
     }
-
-    
-
-
-    
 }
