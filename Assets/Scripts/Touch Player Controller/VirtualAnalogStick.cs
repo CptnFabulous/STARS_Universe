@@ -109,7 +109,7 @@ public class VirtualAnalogStick : MonoBehaviour, IPointerDownHandler, IPointerUp
             handlePosition.y = -handlePosition.y;
         }
         handle.rectTransform.anchoredPosition = handlePosition;
-        Debug.Log(inputValue);
+        //Debug.Log(inputValue);
     }
 
     public void OnPointerUp(PointerEventData eventData)

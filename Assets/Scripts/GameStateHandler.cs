@@ -58,6 +58,9 @@ public class GameStateHandler : MonoBehaviour
         SwitchMenus(pauseMenu);
         playerHandler.Controls.enabled = false;
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         CurrentState = PlayerState.InPauseMenu;
 
         #region Time adjustment
@@ -86,6 +89,8 @@ public class GameStateHandler : MonoBehaviour
     {
         SwitchMenus(headsUpDisplay);
         playerHandler.Controls.enabled = true;
+
+        playerHandler.Controls.ToggleBetweenTouchAndComputerControls();
 
         CurrentState = PlayerState.Active;
 

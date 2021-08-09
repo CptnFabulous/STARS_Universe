@@ -4,8 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class MenuHandler : MonoBehaviour
 {
+    /*
+    public Canvas parentMenu;
+    Canvas canvas;
+
+    private void Awake()
+    {
+        canvas = GetComponent<Canvas>();
+    }
+    */
     /*
     // Start is called before the first frame update
     void Start()
@@ -23,10 +33,32 @@ public class MenuHandler : MonoBehaviour
 
 
 
-
-    public void SwitchMenu(Canvas menu)
+    /*
+    public void SwitchMenu(MenuHandler newMenu)
     {
-        
+        MenuHandler root = newMenu;
+        // If 'root' has a parent, it isn't the root.
+        while(root.parentMenu != null)
+        {
+            //Assign the parent as the new root and check again until a menu is reached with no parent
+            root = root.parentMenu;
+        }
+    }
+    */
+
+    public void SwitchMenu(Canvas newMenu)
+    {
+        Canvas[] childMenus = newMenu.rootCanvas.GetComponentsInChildren<Canvas>();
+        for(int i = 0; i < childMenus.Length; i++)
+        {
+            childMenus[i].enabled = false;
+        }
+        newMenu.enabled = true;
+    }
+
+    public void ReturnToParentMenu()
+    {
+        //SwitchMenu(parentMenu);
     }
 
     public void LoadSceneSimply(string name)

@@ -35,7 +35,7 @@ public class DragZoneAsAnalogStick : MonoBehaviour
         Vector2 inputRect = distanceToMaxInputValue * dragZoneRectDimensions;
 
         // Divides the drag distance by the hypothetical input rect to get the 
-        Vector2 input = inputZone.DragDirectionFromOrigin() / inputRect;
+        Vector2 input = inputZone.DragDirectionFromOrigin / inputRect;
 
         input = TouchFunction.LimitProcessedInput(input, recordedAxes, normaliseInput, invertX, invertY);
 

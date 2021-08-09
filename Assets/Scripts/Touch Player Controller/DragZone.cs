@@ -37,9 +37,12 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     // Holding data
     public Vector2 DragCurrentPosition { get; private set; }
     public Vector2 DragDeltaPosition { get; private set; }
-    public Vector2 DragDirectionFromOrigin()
+    public Vector2 DragDirectionFromOrigin
     {
-        return DragCurrentPosition - DownPosition;
+        get
+        {
+            return DragCurrentPosition - DownPosition;
+        }
     }
 
     void Awake()
@@ -68,6 +71,7 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
+        // If this is the first frame the player has started dragging, create a coroutine to monitor when they stop
         if (checkCoroutine == null)
         {
             checkCoroutine = CheckPlayerHasStoppedDragging();
@@ -81,12 +85,15 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     IEnumerator CheckPlayerHasStoppedDragging()
     {
+        // This function activates when the player starts dragging
         stopDragCheckBool = true;
         while (stopDragCheckBool == true)
         {
+            // The OnDrag function will set this to true, then this function sets it to false and waits a frame.
             stopDragCheckBool = false;
             yield return wait;
         }
+        // If on the next frame the bool has not been turned true again, the player has stopped dragging. Reset DragDeltaPosition and end this function.
         DragDeltaPosition = Vector2.zero;
         checkCoroutine = null;
     }
@@ -112,7 +119,7 @@ public class DragZone : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
             float y = screenPosition.y / Screen.height * crt.rect.height;
             screenPosition = new Vector2(x, y);
 
-            Debug.Log("CRT dimensions = " + new Vector2(crt.rect.width, crt.rect.height));
+            //Debug.Log("CRT dimensions = " + new Vector2(crt.rect.width, crt.rect.height));
         }
         return screenPosition;
     }
