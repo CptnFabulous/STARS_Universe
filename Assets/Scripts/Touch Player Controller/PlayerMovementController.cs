@@ -7,6 +7,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementController : MonoBehaviour
 {
+    PlayerHandler player;
+    
     [Header("Control inputs")]
     public bool useTouchInputs;
     public VirtualAnalogStick movementJoystick;
@@ -34,6 +36,7 @@ public class PlayerMovementController : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
+        player = GetComponent<PlayerHandler>();
         rb = GetComponent<Rigidbody>();
 
         
@@ -64,6 +67,8 @@ public class PlayerMovementController : MonoBehaviour
         cameraJoystick.gameObject.SetActive(useTouchInputs);
         zRotationJoystick.gameObject.SetActive(useTouchInputs);
         boostToggle.gameObject.SetActive(useTouchInputs);
+        player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
+
     }
 
     void SetSpeed(bool isBoosting)
