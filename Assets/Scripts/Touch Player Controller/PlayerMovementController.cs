@@ -16,6 +16,7 @@ public class PlayerMovementController : MonoBehaviour
     public VirtualAnalogStick cameraJoystick;
     public VirtualAnalogStick zRotationJoystick;
     public Toggle boostToggle;
+    public bool useGyroscopeForAiming;
 
 
     public Vector3 rotationDegreesPerSecond = new Vector3(120, 120, 120);
@@ -90,6 +91,13 @@ public class PlayerMovementController : MonoBehaviour
             case true: // Touch inputs
                 movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * speed;
                 rotationValues = new Vector3(-cameraJoystick.Input.y * rotationDegreesPerSecond.x, cameraJoystick.Input.x * rotationDegreesPerSecond.y, zRotationJoystick.Input.y * rotationDegreesPerSecond.z) * Time.deltaTime;
+
+                if (useGyroscopeForAiming)
+                {
+                    rotationValues += Input.gyro.rotationRate;
+                }
+                
+
                 break;
             case false: // KB + M inputs
 
