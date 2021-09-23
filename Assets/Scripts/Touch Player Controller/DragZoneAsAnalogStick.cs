@@ -24,21 +24,24 @@ public class DragZoneAsAnalogStick : MonoBehaviour
         inputZoneTransform = inputZone.GetComponent<RectTransform>();
     }
 
-    public Vector2 Input()
+    public Vector2 InputValue
     {
-        Vector2 dragZoneRectDimensions = new Vector2(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
-        if (squariseInput == true)
+        get
         {
-            float shortestEdge = Mathf.Min(dragZoneRectDimensions.x, dragZoneRectDimensions.y);
-            dragZoneRectDimensions = new Vector2(shortestEdge, shortestEdge);
+            Vector2 dragZoneRectDimensions = new Vector2(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
+            if (squariseInput == true)
+            {
+                float shortestEdge = Mathf.Min(dragZoneRectDimensions.x, dragZoneRectDimensions.y);
+                dragZoneRectDimensions = new Vector2(shortestEdge, shortestEdge);
+            }
+            Vector2 inputRect = distanceToMaxInputValue * dragZoneRectDimensions;
+
+            // Divides the drag distance by the hypothetical input rect to get the 
+            Vector2 input = inputZone.DragDirectionFromOrigin / inputRect;
+
+            input = TouchFunction.LimitProcessedInput(input, recordedAxes, normaliseInput, invertX, invertY);
+
+            return input;
         }
-        Vector2 inputRect = distanceToMaxInputValue * dragZoneRectDimensions;
-
-        // Divides the drag distance by the hypothetical input rect to get the 
-        Vector2 input = inputZone.DragDirectionFromOrigin / inputRect;
-
-        input = TouchFunction.LimitProcessedInput(input, recordedAxes, normaliseInput, invertX, invertY);
-
-        return input;
     }
 }

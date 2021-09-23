@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public PlayerMovementController Controls { get; private set; }
+    public FirstPersonZeroGravityController Controls { get; private set; }
     public GameStateHandler PauseHandler { get; private set; }
 
     private void Awake()
     {
-        Controls = GetComponent<PlayerMovementController>();
+        Controls = GetComponent<FirstPersonZeroGravityController>();
         PauseHandler = GetComponent<GameStateHandler>();
     }
 

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovementController : MonoBehaviour
+public class FirstPersonZeroGravityController : MonoBehaviour
 {
     PlayerHandler player;
     
@@ -86,32 +86,27 @@ public class PlayerMovementController : MonoBehaviour
     void Update()
     {
         // Records either keyboard + mouse or touch inputs
-        switch(useTouchInputs)
+        if (useTouchInputs)
         {
-            case true: // Touch inputs
-                movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * speed;
-                rotationValues = new Vector3(-cameraJoystick.Input.y * rotationDegreesPerSecond.x, cameraJoystick.Input.x * rotationDegreesPerSecond.y, zRotationJoystick.Input.y * rotationDegreesPerSecond.z) * Time.deltaTime;
+            movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * speed;
+            rotationValues = new Vector3(-cameraJoystick.Input.y * rotationDegreesPerSecond.x, cameraJoystick.Input.x * rotationDegreesPerSecond.y, zRotationJoystick.Input.y * rotationDegreesPerSecond.z) * Time.deltaTime;
 
-                if (useGyroscopeForAiming)
-                {
-                    rotationValues += Input.gyro.rotationRate;
-                }
-                
+            if (useGyroscopeForAiming)
+            {
+                rotationValues += Vector3.Scale(Input.gyro.rotationRate, rotationDegreesPerSecond);
+            }
+        }
+        else
+        {
+            // If boost toggle button is pressed, toggle boost speed by invoking functions already set up in the touchscreen control
+            if (Input.GetButtonDown("Boost"))
+            {
+                boostToggle.isOn = !boostToggle.isOn;
+                boostToggle.onValueChanged.Invoke(boostToggle.isOn);
+            }
 
-                break;
-            case false: // KB + M inputs
-
-                // If boost toggle button is pressed, toggle boost speed by invoking functions already set up in the touchscreen control
-                if (Input.GetButtonDown("Boost"))
-                {
-                    boostToggle.isOn = !boostToggle.isOn;
-                    boostToggle.onValueChanged.Invoke(boostToggle.isOn);
-                }
-
-                movementValues = new Vector3(Input.GetAxis("Left/Right"), Input.GetAxis("Up/Down"), Input.GetAxis("Forward/Backward")) * speed;
-                rotationValues = new Vector3(-Input.GetAxis("Mouse Y") * rotationDegreesPerSecond.x, Input.GetAxis("Mouse X") * rotationDegreesPerSecond.y, Input.GetAxis("Clockwise/Counterclockwise") * rotationDegreesPerSecond.z) * Time.deltaTime;
-
-                break;
+            movementValues = new Vector3(Input.GetAxis("Left/Right"), Input.GetAxis("Up/Down"), Input.GetAxis("Forward/Backward")) * speed;
+            rotationValues = new Vector3(-Input.GetAxis("Mouse Y") * rotationDegreesPerSecond.x, Input.GetAxis("Mouse X") * rotationDegreesPerSecond.y, Input.GetAxis("Clockwise/Counterclockwise") * rotationDegreesPerSecond.z) * Time.deltaTime;
         }
         
         //This code determines that rotX and Y are based on the mouse X and Y axes, multiplied by the different X and Y sensitivities.

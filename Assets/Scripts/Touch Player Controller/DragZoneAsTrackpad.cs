@@ -22,21 +22,26 @@ public class DragZoneAsTrackpad : MonoBehaviour
         inputZoneTransform = inputZone.GetComponent<RectTransform>();
     }
 
-    public Vector2 Input()
+    public Vector2 InputValue
     {
-        Vector2 dragZoneRectDimensions = new Vector2(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
-        if (squariseInput == true)
+        get
         {
-            float shortestEdge = Mathf.Min(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
-            dragZoneRectDimensions = new Vector2(shortestEdge, shortestEdge);
+            Vector2 dragZoneRectDimensions = new Vector2(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
+            if (squariseInput == true)
+            {
+                float shortestEdge = Mathf.Min(inputZoneTransform.rect.width, inputZoneTransform.rect.height);
+                dragZoneRectDimensions = new Vector2(shortestEdge, shortestEdge);
+            }
+            Vector2 inputRect = distanceToInputOfOne * dragZoneRectDimensions;
+
+            Vector2 input = inputZone.DragDeltaPosition / inputRect;
+            //input = new Vector2(input.x / inputRect.x, input.y / inputRect.y);
+
+            input = TouchFunction.LimitProcessedInput(input, recordedAxes, false, invertX, invertY);
+
+            return input;
         }
-        Vector2 inputRect = distanceToInputOfOne * dragZoneRectDimensions;
-
-        Vector2 input = inputZone.DragDeltaPosition / inputRect;
-        //input = new Vector2(input.x / inputRect.x, input.y / inputRect.y);
-
-        input = TouchFunction.LimitProcessedInput(input, recordedAxes, false, invertX, invertY);
-
-        return input;
+        
+        
     }
 }
