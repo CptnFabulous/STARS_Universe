@@ -8,30 +8,29 @@ using UnityEngine.UI;
 public class FirstPersonZeroGravityController : MonoBehaviour
 {
     PlayerHandler player;
-    
-    [Header("Control inputs")]
+    Rigidbody rb;
+
     public bool useTouchInputs;
-    public VirtualAnalogStick movementJoystick;
-    public VirtualAnalogStick verticalMovementJoystick;
+
+    [Header("Camera and rotation")]
+    public Vector3 rotationDegreesPerSecond = new Vector3(120, 120, 120);
     public VirtualAnalogStick cameraJoystick;
     public VirtualAnalogStick zRotationJoystick;
-    public Toggle boostToggle;
-    public bool useGyroscopeForAiming;
-
-
-    public Vector3 rotationDegreesPerSecond = new Vector3(120, 120, 120);
-    public bool invertLookX;
-    public bool invertLookY;
-    public bool invertLookZ;
-
-
-    Rigidbody rb;
-    Vector3 movementValues;
     Vector3 rotationValues;
 
-    float speed;
+    [Header("Gyro rotation")]
+    public Toggle toggleGyro;
+    public Vector3 gyroSensitivity = new Vector3(2, 2, 2);
+
+    [Header("Movement")]
     public float moveSpeed = 150;
     public float boostMultiplier = 4;
+    public VirtualAnalogStick movementJoystick;
+    public VirtualAnalogStick verticalMovementJoystick;
+    public Toggle toggleBoost;
+    Vector3 movementValues;
+    float speed;
+
 
 
     // Use this for initialization
@@ -41,11 +40,10 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         
-        if (boostToggle != null)
-        {
-            boostToggle.onValueChanged.AddListener(SetSpeed);
-        }
-
+        toggleBoost.onValueChanged.AddListener(SetSpeed);
+        // Add a listener so pressing the gyro control button will enable/disable the device's gyro functionality
+        toggleGyro.onValueChanged.AddListener((enabled) => Input.gyro.enabled = enabled && SystemInfo.supportsGyroscope);
+        toggleGyro.onValueChanged.Invoke(toggleGyro.isOn);
 
         speed = moveSpeed;
 
@@ -67,7 +65,9 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         verticalMovementJoystick.gameObject.SetActive(useTouchInputs);
         cameraJoystick.gameObject.SetActive(useTouchInputs);
         zRotationJoystick.gameObject.SetActive(useTouchInputs);
-        boostToggle.gameObject.SetActive(useTouchInputs);
+        toggleBoost.gameObject.SetActive(useTouchInputs);
+        // Adds a secondary check to only enable the gyro controls if the device actually has them
+        toggleGyro.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
         player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
 
     }
@@ -82,6 +82,9 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         speed = newSpeed;
     }
 
+
+
+
     // Update is called once per frame
     void Update()
     {
@@ -91,18 +94,24 @@ public class FirstPersonZeroGravityController : MonoBehaviour
             movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * speed;
             rotationValues = new Vector3(-cameraJoystick.Input.y * rotationDegreesPerSecond.x, cameraJoystick.Input.x * rotationDegreesPerSecond.y, zRotationJoystick.Input.y * rotationDegreesPerSecond.z) * Time.deltaTime;
 
-            if (useGyroscopeForAiming)
+            if (Input.gyro.enabled) // Even if this is disabled, it still registers previous values. Therefore, only apply gyro rotation if it is specifically enabled
             {
-                rotationValues += Vector3.Scale(Input.gyro.rotationRate, rotationDegreesPerSecond);
+                Vector3 gyroInput = Input.gyro.rotationRate;
+                gyroInput.x *= gyroSensitivity.x;
+                gyroInput.y *= gyroSensitivity.y;
+                gyroInput.z *= gyroSensitivity.z;
+                rotationValues += gyroInput;
+                //rotationValues += Vector3.Scale(Input.gyro.rotationRate, rotationValues);
             }
+            
         }
         else
         {
             // If boost toggle button is pressed, toggle boost speed by invoking functions already set up in the touchscreen control
             if (Input.GetButtonDown("Boost"))
             {
-                boostToggle.isOn = !boostToggle.isOn;
-                boostToggle.onValueChanged.Invoke(boostToggle.isOn);
+                toggleBoost.isOn = !toggleBoost.isOn;
+                toggleBoost.onValueChanged.Invoke(toggleBoost.isOn);
             }
 
             movementValues = new Vector3(Input.GetAxis("Left/Right"), Input.GetAxis("Up/Down"), Input.GetAxis("Forward/Backward")) * speed;
