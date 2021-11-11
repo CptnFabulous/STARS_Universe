@@ -64,6 +64,14 @@ public class FirstPersonZeroGravityController : MonoBehaviour
 
     public void ToggleBetweenTouchAndComputerControls()
     {
+        Debug.Log("Setting controls");
+
+        // Disable touch inputs if not possible on current hardware
+        if (Input.touchSupported == false)
+        {
+            useTouchInputs = false;
+        }
+
         if (useTouchInputs)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -73,6 +81,7 @@ public class FirstPersonZeroGravityController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
         Cursor.visible = useTouchInputs;
+
         movementJoystick.gameObject.SetActive(useTouchInputs);
         verticalMovementJoystick.gameObject.SetActive(useTouchInputs);
         cameraJoystick.gameObject.SetActive(useTouchInputs);
