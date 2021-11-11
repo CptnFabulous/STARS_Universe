@@ -22,23 +22,57 @@ public class ZeroGravityControlOptions : MonoBehaviour
 
     private void Awake()
     {
+        enableTouchControls.onValueChanged.AddListener((_)=> OnOptionsChanged());
+        cameraX.onValueChanged.AddListener((_) => OnOptionsChanged());
+        cameraY.onValueChanged.AddListener((_) => OnOptionsChanged());
+        cameraZ.onValueChanged.AddListener((_) => OnOptionsChanged());
+        gyroX.onValueChanged.AddListener((_) => OnOptionsChanged());
+        gyroY.onValueChanged.AddListener((_) => OnOptionsChanged());
+        gyroZ.onValueChanged.AddListener((_) => OnOptionsChanged());
+
+        apply.onClick.AddListener(() => ApplySettings());
+        revert.onClick.AddListener(() => RefreshMenu());
+    }
+    private void OnEnable()
+    {
+        if (player != null)
+        {
+            RefreshMenu();
+        }
+    }
+    private void Start()
+    {
         player = GetComponentInParent<FirstPersonZeroGravityController>();
+        RefreshMenu();
     }
 
+    void OnOptionsChanged()
+    {
+        apply.interactable = true;
+        revert.interactable = true;
+    }
     void RefreshMenu()
     {
-        // If KB+M or touch support is unavailable, grey out and select the appropriate option
+        /*
+        if (player == null)
+        {
+            player = GetComponentInParent<FirstPersonZeroGravityController>();
+        }
+
+        Debug.Log(this + ", " + player);
+        */
+
+        // Set touch/KB+M toggle to the player's current setting
         enableTouchControls.interactable = true;
         enableTouchControls.isOn = player.useTouchInputs;
 
-        bool keyboardAndMouseAvailable = Input.mousePresent;
-        bool touchControlsAvailable = Input.touchSupported;
-        if (!keyboardAndMouseAvailable)
+        // If either option is unavailable, grey out and force to the single available option
+        if (!Input.mousePresent)
         {
             enableTouchControls.interactable = false;
             enableTouchControls.isOn = true;
         }
-        else if (!touchControlsAvailable)
+        else if (!Input.touchSupported)
         {
             enableTouchControls.interactable = false;
             enableTouchControls.isOn = false;
@@ -55,18 +89,20 @@ public class ZeroGravityControlOptions : MonoBehaviour
         gyroY.SetInteractable(SystemInfo.supportsGyroscope);
         gyroZ.SetInteractable(SystemInfo.supportsGyroscope);
 
+        apply.interactable = false;
+        revert.interactable = false;
     }
-
-
-    public void ApplySettings(FirstPersonZeroGravityController player)
+    public void ApplySettings()
     {
         player.useTouchInputs = enableTouchControls.isOn;
+        // Alter rotation settings
         player.rotationDegreesPerSecond.x = cameraX.Value;
         player.rotationDegreesPerSecond.y = cameraY.Value;
         player.rotationDegreesPerSecond.z = cameraZ.Value;
-        player.rotationDegreesPerSecond.x = gyroX.Value;
-        player.rotationDegreesPerSecond.y = gyroY.Value;
-        player.rotationDegreesPerSecond.z = gyroZ.Value;
-        
+        // Alter gyro sensitivity
+        player.gyroSensitivity.x = gyroX.Value;
+        player.gyroSensitivity.y = gyroY.Value;
+        player.gyroSensitivity.z = gyroZ.Value;
+        RefreshMenu();
     }
 }

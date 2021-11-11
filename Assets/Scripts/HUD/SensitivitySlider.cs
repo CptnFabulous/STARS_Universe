@@ -9,6 +9,7 @@ public class SensitivitySlider : MonoBehaviour
 {
     Slider value;
     Toggle invert;
+    //Text currentValue;
 
     public Slider.SliderEvent onValueChanged;
 
