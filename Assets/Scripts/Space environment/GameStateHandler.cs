@@ -90,7 +90,7 @@ public class GameStateHandler : MonoBehaviour
         SwitchMenus(headsUpDisplay);
         playerHandler.Controls.enabled = true;
 
-        playerHandler.Controls.ToggleBetweenTouchAndComputerControls();
+        playerHandler.Controls.SetControlsToComputerOrMobile();
 
         CurrentState = PlayerState.Active;
 

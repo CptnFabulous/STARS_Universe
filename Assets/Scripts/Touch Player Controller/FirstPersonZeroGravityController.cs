@@ -62,7 +62,7 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         
     }
 
-    public void ToggleBetweenTouchAndComputerControls()
+    public void SetControlsToComputerOrMobile()
     {
         Debug.Log("Setting controls");
 
