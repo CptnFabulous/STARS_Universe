@@ -31,8 +31,6 @@ public class GameStateHandler : MonoBehaviour
     {
         playerHandler = GetComponent<PlayerHandler>();
     }
-
-
     private void Start()
     {
         // Adds listeners so the buttons work properly
@@ -41,6 +39,13 @@ public class GameStateHandler : MonoBehaviour
         
         // Pre-emptively resumes the game to ensure everything is set up correctly
         ResumeGame();
+    }
+    private void Update()
+    {
+        if (Input.GetButtonDown("Pause") && CurrentState == PlayerState.Active)
+        {
+            PauseGame();
+        }
     }
 
     void SwitchMenus(Canvas correctMenu)
@@ -89,6 +94,7 @@ public class GameStateHandler : MonoBehaviour
     {
         SwitchMenus(headsUpDisplay);
         playerHandler.Controls.enabled = true;
+        Debug.Log("Resuming game");
 
         playerHandler.Controls.SetControlsToComputerOrMobile();
 
