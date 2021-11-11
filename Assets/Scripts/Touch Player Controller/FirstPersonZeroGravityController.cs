@@ -24,13 +24,26 @@ public class FirstPersonZeroGravityController : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 150;
-    public float boostMultiplier = 4;
     public VirtualAnalogStick movementJoystick;
     public VirtualAnalogStick verticalMovementJoystick;
     public Toggle toggleBoost;
     Vector3 movementValues;
-    float speed;
+    float Speed
+    {
+        get
+        {
+            float speed = moveSpeed;
+            if (isBoosting)
+            {
+                speed *= boostMultiplier;
+            }
+            return speed;
+        }
+    }
 
+    [Header("Boosting")]
+    public float boostMultiplier = 4;
+    bool isBoosting;
 
 
     // Use this for initialization
@@ -40,12 +53,11 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
         
-        toggleBoost.onValueChanged.AddListener(SetSpeed);
+        toggleBoost.onValueChanged.AddListener((value)=> isBoosting = value);
         // Add a listener so pressing the gyro control button will enable/disable the device's gyro functionality
         toggleGyro.onValueChanged.AddListener((enabled) => Input.gyro.enabled = enabled && SystemInfo.supportsGyroscope);
         toggleGyro.onValueChanged.Invoke(toggleGyro.isOn);
 
-        speed = moveSpeed;
 
         
     }
@@ -65,22 +77,14 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         verticalMovementJoystick.gameObject.SetActive(useTouchInputs);
         cameraJoystick.gameObject.SetActive(useTouchInputs);
         zRotationJoystick.gameObject.SetActive(useTouchInputs);
-        toggleBoost.gameObject.SetActive(useTouchInputs);
+
+        //toggleBoost.gameObject.SetActive(useTouchInputs);
+
         // Adds a secondary check to only enable the gyro controls if the device actually has them
         toggleGyro.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
         player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
-
     }
 
-    void SetSpeed(bool isBoosting)
-    {
-        float newSpeed = moveSpeed;
-        if (isBoosting)
-        {
-            newSpeed *= boostMultiplier;
-        }
-        speed = newSpeed;
-    }
 
 
 
@@ -91,7 +95,7 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         // Records either keyboard + mouse or touch inputs
         if (useTouchInputs)
         {
-            movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * speed;
+            movementValues = new Vector3(movementJoystick.Input.x, verticalMovementJoystick.Input.y, movementJoystick.Input.y) * Speed;
             rotationValues = new Vector3(-cameraJoystick.Input.y * rotationDegreesPerSecond.x, cameraJoystick.Input.x * rotationDegreesPerSecond.y, zRotationJoystick.Input.y * rotationDegreesPerSecond.z) * Time.deltaTime;
 
             if (Input.gyro.enabled) // Even if this is disabled, it still registers previous values. Therefore, only apply gyro rotation if it is specifically enabled
@@ -101,9 +105,7 @@ public class FirstPersonZeroGravityController : MonoBehaviour
                 gyroInput.y *= gyroSensitivity.y;
                 gyroInput.z *= gyroSensitivity.z;
                 rotationValues += gyroInput;
-                //rotationValues += Vector3.Scale(Input.gyro.rotationRate, rotationValues);
             }
-            
         }
         else
         {
@@ -114,15 +116,9 @@ public class FirstPersonZeroGravityController : MonoBehaviour
                 toggleBoost.onValueChanged.Invoke(toggleBoost.isOn);
             }
 
-            movementValues = new Vector3(Input.GetAxis("Left/Right"), Input.GetAxis("Up/Down"), Input.GetAxis("Forward/Backward")) * speed;
+            movementValues = new Vector3(Input.GetAxis("Left/Right"), Input.GetAxis("Up/Down"), Input.GetAxis("Forward/Backward")) * Speed;
             rotationValues = new Vector3(-Input.GetAxis("Mouse Y") * rotationDegreesPerSecond.x, Input.GetAxis("Mouse X") * rotationDegreesPerSecond.y, Input.GetAxis("Clockwise/Counterclockwise") * rotationDegreesPerSecond.z) * Time.deltaTime;
         }
-        
-        //This code determines that rotX and Y are based on the mouse X and Y axes, multiplied by the different X and Y sensitivities.
-        //rotationValues = new Vector3(cameraJoystick.Input.x * -cameraSensitivity.y, cameraJoystick.Input.x * cameraSensitivity.x, Input.GetAxis("Clockwise/Counterclockwise") * rotateZSpeed * Time.deltaTime);
-        //This clamp code keeps the player from moving the camera past 90 or -90 degrees from horizontal, making sure it doesn't move it completely turn around the other way.
-        //rotationValues.x = Mathf.Clamp(rotationValues.x, -90f, 90f);
-        //rotationValues = new Vector3()
     }
 
     private void FixedUpdate()
