@@ -5,13 +5,8 @@ using UnityEngine.UI;
 
 
 [RequireComponent(typeof(Rigidbody))]
-public class FirstPersonZeroGravityController : MonoBehaviour
+public class FirstPersonZeroGravityController : MovementController
 {
-    PlayerHandler player;
-    Rigidbody rb;
-
-    public bool useTouchInputs;
-
     [Header("Camera and rotation")]
     public Vector3 rotationDegreesPerSecond = new Vector3(120, 120, 120);
     public VirtualAnalogStick cameraJoystick;
@@ -47,10 +42,9 @@ public class FirstPersonZeroGravityController : MonoBehaviour
 
 
     // Use this for initialization
-    void Awake()
+    public override void Awake()
     {
-        player = GetComponent<PlayerHandler>();
-        rb = GetComponent<Rigidbody>();
+        base.Awake();
 
         
         toggleBoost.onValueChanged.AddListener((value)=> isBoosting = value);
@@ -62,36 +56,18 @@ public class FirstPersonZeroGravityController : MonoBehaviour
         
     }
 
-    public void SetControlsToComputerOrMobile()
+    public override void SetControlsToComputerOrMobile()
     {
-        Debug.Log("Setting controls");
-
-        // Disable touch inputs if not possible on current hardware
-        if (Input.touchSupported == false)
-        {
-            useTouchInputs = false;
-        }
-
-        if (useTouchInputs)
-        {
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-        Cursor.visible = useTouchInputs;
+        base.SetControlsToComputerOrMobile();
 
         movementJoystick.gameObject.SetActive(useTouchInputs);
         verticalMovementJoystick.gameObject.SetActive(useTouchInputs);
         cameraJoystick.gameObject.SetActive(useTouchInputs);
         zRotationJoystick.gameObject.SetActive(useTouchInputs);
 
-        //toggleBoost.gameObject.SetActive(useTouchInputs);
-
         // Adds a secondary check to only enable the gyro controls if the device actually has them
         toggleGyro.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
-        player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
+        
     }
 
 
