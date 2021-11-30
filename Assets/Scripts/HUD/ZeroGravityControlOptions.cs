@@ -3,64 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ZeroGravityControlOptions : MonoBehaviour
+public class ZeroGravityControlOptions : OptionsMenu
 {
-    [Header("General elements")]
-    public Button apply;
-    public Button revert;
-
     [Header("Specific options")]
     public Toggle enableTouchControls;
     public SensitivitySlider cameraX;
     public SensitivitySlider cameraY;
     public SensitivitySlider cameraZ;
+    public float maxCameraSensitivity = 100;
     public SensitivitySlider gyroX;
     public SensitivitySlider gyroY;
     public SensitivitySlider gyroZ;
+    public float maxGyroSensitivity = 5;
 
     FirstPersonZeroGravityController player;
 
-    private void Awake()
+    public override void SetupOptions()
     {
-        enableTouchControls.onValueChanged.AddListener((_)=> OnOptionsChanged());
+        enableTouchControls.onValueChanged.AddListener((_) => OnOptionsChanged());
         cameraX.onValueChanged.AddListener((_) => OnOptionsChanged());
         cameraY.onValueChanged.AddListener((_) => OnOptionsChanged());
         cameraZ.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroX.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroY.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroZ.onValueChanged.AddListener((_) => OnOptionsChanged());
-
-        apply.onClick.AddListener(() => ApplySettings());
-        revert.onClick.AddListener(() => RefreshMenu());
     }
-    private void OnEnable()
-    {
-        if (player != null)
-        {
-            RefreshMenu();
-        }
-    }
-    private void Start()
+    public override void ObtainCurrentValues()
     {
         player = GetComponentInParent<FirstPersonZeroGravityController>();
-        RefreshMenu();
-    }
-
-    void OnOptionsChanged()
-    {
-        apply.interactable = true;
-        revert.interactable = true;
-    }
-    void RefreshMenu()
-    {
-        /*
-        if (player == null)
-        {
-            player = GetComponentInParent<FirstPersonZeroGravityController>();
-        }
-
-        Debug.Log(this + ", " + player);
-        */
 
         // Set touch/KB+M toggle to the player's current setting
         enableTouchControls.interactable = true;
@@ -78,21 +48,18 @@ public class ZeroGravityControlOptions : MonoBehaviour
             enableTouchControls.isOn = false;
         }
 
-        cameraX.Refresh(player.rotationDegreesPerSecond.x);
-        cameraY.Refresh(player.rotationDegreesPerSecond.y);
-        cameraZ.Refresh(player.rotationDegreesPerSecond.z);
+        cameraX.Refresh(player.rotationDegreesPerSecond.x, maxCameraSensitivity);
+        cameraY.Refresh(player.rotationDegreesPerSecond.y, maxCameraSensitivity);
+        cameraZ.Refresh(player.rotationDegreesPerSecond.z, maxCameraSensitivity);
 
-        gyroX.Refresh(player.gyroSensitivity.x);
-        gyroY.Refresh(player.gyroSensitivity.y);
-        gyroZ.Refresh(player.gyroSensitivity.z);
+        gyroX.Refresh(player.gyroSensitivity.x, maxGyroSensitivity);
+        gyroY.Refresh(player.gyroSensitivity.y, maxGyroSensitivity);
+        gyroZ.Refresh(player.gyroSensitivity.z, maxGyroSensitivity);
         gyroX.SetInteractable(SystemInfo.supportsGyroscope);
         gyroY.SetInteractable(SystemInfo.supportsGyroscope);
         gyroZ.SetInteractable(SystemInfo.supportsGyroscope);
-
-        apply.interactable = false;
-        revert.interactable = false;
     }
-    public void ApplySettings()
+    public override void ApplySettings()
     {
         player.useTouchInputs = enableTouchControls.isOn;
         // Alter rotation settings
@@ -103,6 +70,5 @@ public class ZeroGravityControlOptions : MonoBehaviour
         player.gyroSensitivity.x = gyroX.Value;
         player.gyroSensitivity.y = gyroY.Value;
         player.gyroSensitivity.z = gyroZ.Value;
-        RefreshMenu();
     }
 }
