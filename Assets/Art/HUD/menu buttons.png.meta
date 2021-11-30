@@ -40,10 +40,10 @@ TextureImporter:
     second: button_speed
   - first:
       213: 8507054035079360125
-    second: menu buttons_8
+    second: button_person
   - first:
       213: -3742511392401416443
-    second: menu buttons_9
+    second: button_spaceship
   - first:
       213: -9129255319970573773
     second: menu buttons_10
@@ -339,7 +339,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: menu buttons_8
+      name: button_person
       rect:
         serializedVersion: 2
         x: 514
@@ -360,7 +360,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: menu buttons_9
+      name: button_spaceship
       rect:
         serializedVersion: 2
         x: 0
