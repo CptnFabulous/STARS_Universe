@@ -160,6 +160,10 @@ public class SpaceshipMovement : MovementController
         }
         
         currentCameraPosition = Vector3.SmoothDamp(currentCameraPosition, desiredCameraOrientation.position, ref cameraVelocity, cameraPositionUpdateTime);
+        float correctDistance = Vector3.Distance(transform.position, desiredCameraOrientation.position);
+        Vector3 relativePositionWithCorrectDistance = (currentCameraPosition - transform.position).normalized * correctDistance;
+        currentCameraPosition = transform.position + relativePositionWithCorrectDistance;
+
         float timer = Mathf.SmoothDamp(0f, 1f, ref cameraRotationVelocityTimer, cameraRotationUpdateTime);
         currentCameraRotation = Quaternion.Slerp(currentCameraRotation, desiredCameraOrientation.rotation, timer);
     }
