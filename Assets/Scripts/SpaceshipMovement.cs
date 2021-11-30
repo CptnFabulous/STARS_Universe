@@ -20,33 +20,74 @@ public class SpaceshipMovement : MovementController
     }
 
     [Header("Steering")]
+    public Vector3 steerSpeed = Vector3.one * 60;
+    public bool invertPitch;
+    public bool invertYaw;
+    public bool invertRoll;
+    Vector3 steerAngles;
+    [Header("Steering - Touch")]
     public VirtualAnalogStick pitchAndYaw;
     public VirtualAnalogStick roll;
-    public Vector3 steerSpeed = Vector3.one * 60;
-    Vector3 steerAngles;
-    public Vector2 MouseSteer(Vector2 sensitivity, ref Vector2 persistentValue, AnimationCurve curveX, AnimationCurve curveY)
-    {
-        // Obtain 2D camera input (mouse X and Y or gyro X and Y)
-        // Move rollAndPitch based on 2D camera input multiplied by sensitivity
-        // Clamp rollAndPitch so they're between 0 and 1
+    [Header("Steering - Gyro")]
+    public Vector3 gyroSensitivity = Vector3.one;
+    public UnityEngine.UI.Toggle gyroToggle;
+    [Header("Steering - Mouse")]
+    public Vector2 mouseSensitivity = Vector2.one;
+    public float scrollWheelSensitivity = 99;
+    //public AnimationCurve mouseSensitivityCurve;
 
-        Vector2 steer = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        steer.x *= sensitivity.x;
-        steer.y *= sensitivity.y;
-        persistentValue += steer;
-        persistentValue.x = Mathf.Clamp(persistentValue.x, -1, 1);
-        persistentValue.y = Mathf.Clamp(persistentValue.y, -1, 1);
-        persistentValue.x *= curveX.Evaluate(Mathf.Abs(persistentValue.x));
-        persistentValue.y *= curveY.Evaluate(Mathf.Abs(persistentValue.y));
-        return persistentValue;
+    Vector3 MouseSteerInput()
+    {
+        Vector2 steer = new Vector2(Input.GetAxis("Mouse X") * mouseSensitivity.x, -Input.GetAxis("Mouse Y") * mouseSensitivity.y);
+        steer.x = Mathf.Clamp(steer.x, -1, 1);
+        steer.y = Mathf.Clamp(steer.y, -1, 1);
+
+        Vector3 values = new Vector3(steer.y, steer.x, 0);
+
+        float scrollValue = Input.GetAxis("Mouse ScrollWheel") * float.MaxValue;
+        scrollValue = Mathf.Clamp(scrollValue, -1, 1);
+        //Debug.Log(scrollValue);
+        values.z = scrollValue;
+        //Debug.Log(scrollValue);
+        return values;
     }
+    Vector2 mouseInputs;
+    Vector3 GyroSteerInput()
+    {
+        if (!Input.gyro.enabled)
+        {
+            return Vector3.zero;
+        }
+        gyro += MiscMath.Vector3Multiply(Input.gyro.rotationRate, gyroSensitivity);
+        gyro = MiscMath.Vector3Clamp(gyro, Vector3.one * -1, Vector3.one);
+        Vector3 finalValue = gyro;
+        finalValue.x = -finalValue.x;
+        return finalValue;
+    }
+    Vector3 gyro;
     public Vector3 SteerInput
     {
         get
         {
-            Vector3 touch = new Vector3(pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
-            Vector3 keyboard = new Vector3(Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
-            return touch + keyboard;
+            Vector3 keyboard = new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
+            Vector3 mouse = MouseSteerInput();
+            Vector3 touch = new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
+            Vector3 gyro = GyroSteerInput();
+
+            Vector3 input = keyboard + mouse + touch + gyro;
+            if (invertPitch)
+            {
+                input.x = -input.x;
+            }
+            if (invertYaw)
+            {
+                input.y = -input.y;
+            }
+            if (invertRoll)
+            {
+                input.z = -input.z;
+            }
+            return input;
         }
     }
 
@@ -73,6 +114,11 @@ public class SpaceshipMovement : MovementController
     {
         base.Awake();
         rb.useGravity = false;
+        // Use this for initialization
+
+        // Add a listener so pressing the gyro control button will enable/disable the device's gyro functionality
+        gyroToggle.onValueChanged.AddListener((enabled) => Input.gyro.enabled = enabled && SystemInfo.supportsGyroscope);
+        gyroToggle.onValueChanged.Invoke(gyroToggle.isOn);
     }
 
 
@@ -85,9 +131,7 @@ public class SpaceshipMovement : MovementController
             return;
         }
 
-        steerAngles.x = SteerInput.x * steerSpeed.x;
-        steerAngles.y = SteerInput.y * steerSpeed.y;
-        steerAngles.z = SteerInput.z * steerSpeed.z;
+        steerAngles = MiscMath.Vector3Multiply(SteerInput, steerSpeed);
 
         if (Input.GetButtonDown("Boost") && testMesh != null)
         {
@@ -118,7 +162,6 @@ public class SpaceshipMovement : MovementController
         currentCameraPosition = Vector3.SmoothDamp(currentCameraPosition, desiredCameraOrientation.position, ref cameraVelocity, cameraPositionUpdateTime);
         float timer = Mathf.SmoothDamp(0f, 1f, ref cameraRotationVelocityTimer, cameraRotationUpdateTime);
         currentCameraRotation = Quaternion.Slerp(currentCameraRotation, desiredCameraOrientation.rotation, timer);
-        
     }
 
     private void LateUpdate()
@@ -133,6 +176,8 @@ public class SpaceshipMovement : MovementController
         speedControl.gameObject.SetActive(useTouchInputs);
         pitchAndYaw.gameObject.SetActive(useTouchInputs);
         roll.gameObject.SetActive(useTouchInputs);
+
+        gyroToggle.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
     }
 
 
