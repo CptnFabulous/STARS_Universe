@@ -31,6 +31,10 @@ public class ZeroGravityControlOptions : OptionsMenu
     public override void ObtainCurrentValues()
     {
         player = GetComponentInParent<FirstPersonZeroGravityController>();
+        if (player == null)
+        {
+            return;
+        }
 
         // Set touch/KB+M toggle to the player's current setting
         enableTouchControls.interactable = true;

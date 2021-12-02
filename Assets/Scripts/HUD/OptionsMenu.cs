@@ -23,11 +23,13 @@ public abstract class OptionsMenu : MonoBehaviour
     public void Apply()
     {
         ApplySettings();
+        Debug.Log("Settings applied, refreshing now");
         Refresh();
     }
     void Refresh()
     {
         ObtainCurrentValues();
+        Debug.Log("Reverting apply and revert buttons on frame " + Time.frameCount);
         apply.interactable = false;
         revert.interactable = false;
     }

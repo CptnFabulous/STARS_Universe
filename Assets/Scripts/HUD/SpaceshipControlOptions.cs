@@ -40,11 +40,17 @@ public class SpaceshipControlOptions : OptionsMenu
         player.gyroSensitivity.x = OptionsMenu.SliderValueToSensitivity(gyroPitch, maxGyroSensitivity);
         player.gyroSensitivity.y = OptionsMenu.SliderValueToSensitivity(gyroYaw, maxGyroSensitivity);
         player.gyroSensitivity.z = OptionsMenu.SliderValueToSensitivity(gyroRoll, maxGyroSensitivity);
+
+        Debug.Log("Spaceship settings applied on frame " + Time.frameCount);
     }
 
     public override void ObtainCurrentValues()
     {
         player = GetComponentInParent<SpaceshipMovement>();
+        if (player == null)
+        {
+            return;
+        }
 
         // Set touch/KB+M toggle to the player's current setting
         useTouchControls.interactable = true;
