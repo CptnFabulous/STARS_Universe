@@ -9,7 +9,7 @@ public abstract class MovementController : MonoBehaviour
     IEnumerator currentAutoAction;
 
     public bool useTouchInputs;
-    public bool manualControlDisabled;
+    [HideInInspector] public bool manualControlDisabled;
 
     public virtual void Awake()
     {
