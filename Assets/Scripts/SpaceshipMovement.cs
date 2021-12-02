@@ -190,6 +190,8 @@ public class SpaceshipMovement : MovementController
 
     public IEnumerator Warp(Bounds thingToWarpTo)
     {
+        rb.isKinematic = true;
+        
         Quaternion oldRotation = transform.rotation;
         Quaternion lookingTowardsDestination = Quaternion.LookRotation(thingToWarpTo.center - transform.position);
 
@@ -221,5 +223,7 @@ public class SpaceshipMovement : MovementController
         }
 
         manualControlDisabled = false;
+
+        rb.isKinematic = false;
     }
 }
