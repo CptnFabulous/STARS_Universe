@@ -18,4 +18,20 @@ public static class MiscMath
         vector.z = Mathf.Clamp(vector.z, min.z, max.z);
         return vector;
     }
+
+    public static float RoundToDecimalPlaces(float number, int decimalPlaces)
+    {
+        for (int i = 0; i < decimalPlaces; i++)
+        {
+            number *= 10;
+        }
+
+        number = Mathf.RoundToInt(number);
+
+        for (int i = 0; i < decimalPlaces; i++)
+        {
+            number /= 10;
+        }
+        return number;
+    }
 }

@@ -9,6 +9,8 @@ public class SpaceshipMovement : MovementController
     public VirtualAnalogStick speedControl;
     public float forwardSpeed = 150;
     public float reverseSpeed = 50;
+    public float acceleration = 50;
+    public bool autoBrake = true;
     public float MoveInput
     {
         get
@@ -19,6 +21,7 @@ public class SpaceshipMovement : MovementController
         }
     }
 
+    public UnityEngine.UI.Text speedometer;
     [Header("Steering")]
     public Vector3 steerSpeed = Vector3.one * 60;
     public bool invertPitch;
@@ -144,17 +147,21 @@ public class SpaceshipMovement : MovementController
     {
         if (!manualControlDisabled)
         {
-            float distanceToMove = MoveInput;
-            if (distanceToMove > 0)
+            float desiredVelocity = MoveInput;
+            if (desiredVelocity > 0)
             {
-                distanceToMove *= forwardSpeed;
+                desiredVelocity *= forwardSpeed;
             }
             else
             {
-                distanceToMove *= reverseSpeed;
+                desiredVelocity *= reverseSpeed;
+            };
+
+            if (desiredVelocity != 0 || autoBrake)
+            {
+                rb.velocity = Vector3.MoveTowards(rb.velocity, transform.forward * desiredVelocity, acceleration * Time.fixedDeltaTime);
+                //rb.MovePosition(transform.position + distanceToMove * transform.forward);
             }
-            distanceToMove *= Time.fixedDeltaTime;
-            rb.MovePosition(transform.position + distanceToMove * transform.forward);
             Quaternion steerRotation = Quaternion.Euler(steerAngles * Time.fixedDeltaTime);
             rb.MoveRotation(transform.rotation * steerRotation);
         }
@@ -175,6 +182,8 @@ public class SpaceshipMovement : MovementController
         // Update viewing camera orientation
         viewCamera.transform.rotation = currentCameraRotation;
         viewCamera.transform.position = transform.position + relativePositionWithCorrectDistance;
+
+        speedometer.text = MiscMath.RoundToDecimalPlaces(rb.velocity.magnitude, 1) + "km/h";
     }
 
     public override void SetControlsToComputerOrMobile()
