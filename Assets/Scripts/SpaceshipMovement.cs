@@ -24,6 +24,7 @@ public class SpaceshipMovement : MovementController
     public UnityEngine.UI.Text speedometer;
     [Header("Steering")]
     public Vector3 steerSpeed = Vector3.one * 60;
+    public float angularVelocityDampenSpeed = 50;
     public bool invertPitch;
     public bool invertYaw;
     public bool invertRoll;
@@ -134,7 +135,7 @@ public class SpaceshipMovement : MovementController
             return;
         }
 
-        steerAngles = MiscMath.Vector3Multiply(SteerInput, steerSpeed);
+        steerAngles = SteerInput;
 
         if (Input.GetButtonDown("Boost") && testMesh != null)
         {
@@ -162,8 +163,13 @@ public class SpaceshipMovement : MovementController
                 rb.velocity = Vector3.MoveTowards(rb.velocity, transform.forward * desiredVelocity, acceleration * Time.fixedDeltaTime);
                 //rb.MovePosition(transform.position + distanceToMove * transform.forward);
             }
-            Quaternion steerRotation = Quaternion.Euler(steerAngles * Time.fixedDeltaTime);
+
+            Quaternion steerRotation = Quaternion.Euler(MiscMath.Vector3Multiply(steerAngles, steerSpeed) * Time.fixedDeltaTime);
             rb.MoveRotation(transform.rotation * steerRotation);
+            if (steerAngles.magnitude > 0) // If player is steering and also moving due to velocity, slowly counter and cancel current velocity so the player can properly align themselves
+            {
+                rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * steerAngles.magnitude * Time.fixedDeltaTime);
+            }
         }
         
         // Calculate camera position, accounting for physics
