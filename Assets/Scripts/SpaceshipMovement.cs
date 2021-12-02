@@ -189,7 +189,8 @@ public class SpaceshipMovement : MovementController
         viewCamera.transform.rotation = currentCameraRotation;
         viewCamera.transform.position = transform.position + relativePositionWithCorrectDistance;
 
-        speedometer.text = MiscMath.RoundToDecimalPlaces(rb.velocity.magnitude, 1) + "km/h";
+        //speedometer.text = MiscMath.RoundToDecimalPlaces(rb.velocity.magnitude, 1) + "km/h";
+        speedometer.text = Mathf.RoundToInt(rb.velocity.magnitude) + "km/h";
     }
 
     public override void SetControlsToComputerOrMobile()
