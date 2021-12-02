@@ -11,7 +11,7 @@ public abstract class OptionsMenu : MonoBehaviour
 
     public virtual void Awake()
     {
-        apply.onClick.AddListener(() => ApplySettings());
+        apply.onClick.AddListener(() => Apply());
         revert.onClick.AddListener(() => Refresh());
         SetupOptions();
     }
