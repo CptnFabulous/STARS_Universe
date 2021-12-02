@@ -159,19 +159,22 @@ public class SpaceshipMovement : MovementController
             rb.MoveRotation(transform.rotation * steerRotation);
         }
         
+        // Calculate camera position, accounting for physics
         currentCameraPosition = Vector3.SmoothDamp(currentCameraPosition, desiredCameraOrientation.position, ref cameraVelocity, cameraPositionUpdateTime);
-        float correctDistance = Vector3.Distance(transform.position, desiredCameraOrientation.position);
-        Vector3 relativePositionWithCorrectDistance = (currentCameraPosition - transform.position).normalized * correctDistance;
-        currentCameraPosition = transform.position + relativePositionWithCorrectDistance;
-
+        // Calculate camera rotation, accounting for physics
         float timer = Mathf.SmoothDamp(0f, 1f, ref cameraRotationVelocityTimer, cameraRotationUpdateTime);
         currentCameraRotation = Quaternion.Slerp(currentCameraRotation, desiredCameraOrientation.rotation, timer);
     }
 
     private void LateUpdate()
     {
+        // Produce a viewing camera position whose distance is clamped relative to the player transform, so it doesn't get too far away when the player is moving at high speeds.
+        float correctDistance = Vector3.Distance(transform.position, desiredCameraOrientation.position);
+        Vector3 relativePositionWithCorrectDistance = (currentCameraPosition - transform.position).normalized * correctDistance;
+
+        // Update viewing camera orientation
         viewCamera.transform.rotation = currentCameraRotation;
-        viewCamera.transform.position = currentCameraPosition;
+        viewCamera.transform.position = transform.position + relativePositionWithCorrectDistance;
     }
 
     public override void SetControlsToComputerOrMobile()
