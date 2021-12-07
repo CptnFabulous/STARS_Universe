@@ -50,11 +50,7 @@ public class SpaceshipMovement : MovementController
 
         Vector3 values = new Vector3(steer.y, steer.x, 0);
 
-        float scrollValue = Input.GetAxis("Mouse ScrollWheel") * float.MaxValue;
-        scrollValue = Mathf.Clamp(scrollValue, -1, 1);
-        //Debug.Log(scrollValue);
-        values.z = scrollValue;
-        //Debug.Log(scrollValue);
+        values.z = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel") * float.MaxValue, -1, 1);
         return values;
     }
     Vector2 mouseInputs;
