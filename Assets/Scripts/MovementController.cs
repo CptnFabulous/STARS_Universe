@@ -9,6 +9,7 @@ public abstract class MovementController : MonoBehaviour
     IEnumerator currentAutoAction;
 
     public bool useTouchInputs;
+    public bool forceTouchInputsForDebugging;
     [HideInInspector] public bool manualControlDisabled;
 
     public virtual void Awake()
@@ -22,7 +23,7 @@ public abstract class MovementController : MonoBehaviour
         Debug.Log("Setting controls");
 
         // Disable touch inputs if not possible on current hardware
-        if (Input.touchSupported == false)
+        if (Input.touchSupported == false && forceTouchInputsForDebugging == false)
         {
             useTouchInputs = false;
         }
