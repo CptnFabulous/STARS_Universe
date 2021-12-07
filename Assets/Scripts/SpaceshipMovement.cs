@@ -7,10 +7,12 @@ public class SpaceshipMovement : MovementController
 
     [Header("Movement")]
     public VirtualAnalogStick speedControl;
+    public ButtonWithDownAndUpEvents brake;
     public float forwardSpeed = 150;
     public float reverseSpeed = 50;
     public float acceleration = 50;
     public bool autoBrake = true;
+    bool isBraking;
     public float MoveInput
     {
         get
@@ -133,6 +135,8 @@ public class SpaceshipMovement : MovementController
         Input.gyro.enabled = true;
 
         resetGyro.onClick.AddListener(ResetGyro);
+        brake.onDown.AddListener(() => isBraking = true);
+        brake.onUp.AddListener(() => isBraking = false);
 
     // Update is called once per frame
     void Update()
@@ -145,7 +149,7 @@ public class SpaceshipMovement : MovementController
 
         steerAngles = SteerInput;
 
-        if (Input.GetButtonDown("Boost") && testMesh != null)
+        if (Input.GetButtonDown("Warp") && testMesh != null)
         {
             InitiateAutomaticAction(Warp(testMesh.bounds));
         }
@@ -166,12 +170,15 @@ public class SpaceshipMovement : MovementController
                 desiredVelocity *= reverseSpeed;
             };
 
-            if (desiredVelocity != 0 || autoBrake)
+            // If velocity is being updated OR
+            // Keyboard brake button is being held OR
+            // Braking bool has been activated by touch function OR
+            // Auto-braking is enabled
+            if (desiredVelocity != 0 || Input.GetButton("Brake") || isBraking || autoBrake)
             {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, transform.forward * desiredVelocity, acceleration * Time.fixedDeltaTime);
-                //rb.MovePosition(transform.position + distanceToMove * transform.forward);
+                rb.velocity = Vector3.MoveTowards(rb.velocity, transform.forward * desiredVelocity, acceleration * Time.fixedDeltaTime);//rb.MovePosition(transform.position + distanceToMove * transform.forward);
             }
-
+            
             Quaternion steerRotation = Quaternion.Euler(MiscMath.Vector3Multiply(steerAngles, steerSpeed) * Time.fixedDeltaTime);
             rb.MoveRotation(transform.rotation * steerRotation);
             if (steerAngles.magnitude > 0) // If player is steering and also moving due to velocity, slowly counter and cancel current velocity so the player can properly align themselves
