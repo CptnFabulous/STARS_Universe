@@ -33,8 +33,10 @@ public class SpaceshipMovement : MovementController
     public VirtualAnalogStick pitchAndYaw;
     public VirtualAnalogStick roll;
     [Header("Steering - Gyro")]
+    public bool enableGyro;
     public Vector3 gyroSensitivity = Vector3.one;
     public UnityEngine.UI.Toggle gyroToggle;
+    public UnityEngine.UI.Button resetGyro;
     [Header("Steering - Mouse")]
     public Vector2 mouseSensitivity = Vector2.one;
     public float scrollWheelSensitivity = 99;
@@ -56,19 +58,19 @@ public class SpaceshipMovement : MovementController
         return values;
     }
     Vector2 mouseInputs;
-    Vector3 GyroSteerInput()
+
+    Quaternion gyroZero = Quaternion.identity;
+    public Vector3 GyroSteer()
     {
-        if (!Input.gyro.enabled)
-        {
-            return Vector3.zero;
-        }
-        gyro += MiscMath.Vector3Multiply(Input.gyro.rotationRate, gyroSensitivity);
-        gyro = MiscMath.Vector3Clamp(gyro, Vector3.one * -1, Vector3.one);
-        Vector3 finalValue = gyro;
-        finalValue.x = -finalValue.x;
-        return finalValue;
+        Quaternion relativeGyro = Input.gyro.attitude * Quaternion.Inverse(gyroZero);
+        Vector3 eulerAngles = MiscMath.Vector3Multiply(relativeGyro.eulerAngles, gyroSensitivity);
+        return MiscMath.Vector3Clamp(eulerAngles, Vector3.one * -1, Vector3.one);
     }
-    Vector3 gyro;
+    public void ResetGyro()
+    {
+        gyroZero = Input.gyro.attitude;
+    }
+
     public Vector3 SteerInput
     {
         get
@@ -128,7 +130,9 @@ public class SpaceshipMovement : MovementController
         gyroToggle.onValueChanged.AddListener((enabled) => Input.gyro.enabled = enabled && SystemInfo.supportsGyroscope);
         gyroToggle.onValueChanged.Invoke(gyroToggle.isOn);
     }
+        Input.gyro.enabled = true;
 
+        resetGyro.onClick.AddListener(ResetGyro);
 
     // Update is called once per frame
     void Update()
