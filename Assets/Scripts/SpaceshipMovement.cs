@@ -76,6 +76,10 @@ public class SpaceshipMovement : MovementController
             input += new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
             // Touchscreen input
             input += new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
+            if (enableGyro)
+            {
+                input += GyroSteer();
+            }
             if (useTouchInputs == false)
             {
                 input += MouseSteerInput();
