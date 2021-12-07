@@ -73,12 +73,16 @@ public class SpaceshipMovement : MovementController
     {
         get
         {
-            Vector3 keyboard = new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
-            Vector3 mouse = MouseSteerInput();
-            Vector3 touch = new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
-            Vector3 gyro = GyroSteerInput();
+            Vector3 input = Vector3.zero;
+            // Keyboard input
+            input += new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
+            // Touchscreen input
+            input += new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
+            if (useTouchInputs == false)
+            {
+                input += MouseSteerInput();
+            }
 
-            Vector3 input = keyboard + mouse + touch + gyro;
             if (invertPitch)
             {
                 input.x = -input.x;
