@@ -212,10 +212,12 @@ public class SpaceshipMovement : MovementController
     {
         base.SetControlsToComputerOrMobile();
         speedControl.gameObject.SetActive(useTouchInputs);
+        brake.gameObject.SetActive(useTouchInputs);
         pitchAndYaw.gameObject.SetActive(useTouchInputs);
         roll.gameObject.SetActive(useTouchInputs);
 
         gyroToggle.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
+        resetGyro.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
     }
 
 
