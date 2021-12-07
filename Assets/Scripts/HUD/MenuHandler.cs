@@ -23,6 +23,8 @@ public class MenuHandler : MonoBehaviour
     {
         canvas = GetComponent<Canvas>();
         canvasGroupData = GetComponent<CanvasGroup>();
+        Debug.Log(name + ", " + canvasGroupData);
+
         canvasGroupData.ignoreParentGroups = true;
 
         parentMenu = null;
@@ -35,7 +37,7 @@ public class MenuHandler : MonoBehaviour
         
         if (parentMenu == null) // If this menu doesn't have a parent, it is the root.
         {
-            //root = this;
+            root = this;
             // Reference the root in all children at the start so the calculations are only performed once.
             children = GetComponentsInChildren<MenuHandler>(true);
             for (int i = 0; i < children.Length; i++)
@@ -47,6 +49,7 @@ public class MenuHandler : MonoBehaviour
 
     public void SetWindowActiveState(bool active)
     {
+        //Debug.Log(name + ", " + canvasGroupData + ", " + enabled);
         canvasGroupData.alpha = active ? 1 : 0; // Essentially says "set to one if active, otherwise set to zero"
         canvasGroupData.interactable = active;
         canvasGroupData.blocksRaycasts = active;
