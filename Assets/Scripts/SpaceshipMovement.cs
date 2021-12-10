@@ -224,6 +224,8 @@ public class SpaceshipMovement : MovementController
     public IEnumerator Warp(Bounds thingToWarpTo)
     {
         rb.isKinematic = true;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         
         Quaternion oldRotation = transform.rotation;
         Quaternion lookingTowardsDestination = Quaternion.LookRotation(thingToWarpTo.center - transform.position);
@@ -234,7 +236,8 @@ public class SpaceshipMovement : MovementController
             timer += Time.deltaTime / warpRotateTime;
             timer = Mathf.Clamp01(timer);
 
-            transform.rotation = Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer);
+            //transform.rotation = Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer);
+            rb.MoveRotation(Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer));
 
             yield return null;
         }
