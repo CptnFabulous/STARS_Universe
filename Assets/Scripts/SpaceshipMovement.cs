@@ -7,7 +7,7 @@ public class SpaceshipMovement : MovementController
 
     [Header("Movement")]
     public VirtualAnalogStick speedControl;
-    public ButtonWithDownAndUpEvents brake;
+    public HoldableButton brake;
     public float forwardSpeed = 150;
     public float reverseSpeed = 50;
     public float acceleration = 50;

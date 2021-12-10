@@ -7,13 +7,15 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(Image))]
-public class ButtonWithDownAndUpEvents : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+public class HoldableButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     public UnityEvent onDown;
     public Color defaultColour = Color.white;
     public UnityEvent onUp;
     public Color pressedColour = Color.gray;
     Image i;
+
+    public bool Held { get; private set; }
 
     void Awake()
     {
@@ -23,6 +25,7 @@ public class ButtonWithDownAndUpEvents : MonoBehaviour, IPointerDownHandler, IPo
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        Held = true;
         onDown.Invoke();
         i.color = pressedColour;
     }
@@ -34,6 +37,7 @@ public class ButtonWithDownAndUpEvents : MonoBehaviour, IPointerDownHandler, IPo
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        Held = false;
         onUp.Invoke();
         i.color = defaultColour;
     }
