@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class SpaceshipMovement : MovementController
 {
+    [Header("Mobile controls")]
+    public VirtualAnalogStick speedControl;
+    public HoldableButton movementBrake;
+    public VirtualAnalogStick pitchAndYaw;
+    public VirtualAnalogStick roll;
+    public HoldableButton rotationBrake;
+    public GyroSteeringWheel gyroControls;
 
     [Header("Movement")]
-    public VirtualAnalogStick speedControl;
-    public HoldableButton brake;
-    public float forwardSpeed = 150;
+    public float forwardSpeed = 250;
     public float reverseSpeed = 50;
-    public float acceleration = 50;
+    public float acceleration = 125;
+    public float deceleration = 125;
     public bool autoBrake = true;
-    bool isBraking;
     public float MoveInput
     {
         get
@@ -22,68 +27,55 @@ public class SpaceshipMovement : MovementController
             return touch + keyboard;
         }
     }
+    public bool BrakingMovement
+    {
+        get
+        {
+            return Input.GetButton("Brake Movement") || movementBrake.Held || autoBrake;
+        }
+    }
 
     [Header("Steering")]
-    public Vector3 steerSpeed = Vector3.one * 60;
+    public Vector3 steerSpeedPerVelocityUnit = Vector3.one * 0.2f;
+    public Vector3 stationaryTurnSpeed = Vector3.one * 60;
     public float angularVelocityDampenSpeed = 1;
+    public bool BrakingRotation
+    {
+        get
+        {
+            return Input.GetButton("Brake Rotation") || rotationBrake.Held || autoBrake;
+        }
+    }
+
+    [Header("Camera control")]
+    public Vector2 mouseSensitivity = Vector2.one * 0.3f;
+    public Vector3 gyroSensitivity = Vector2.one;
     public bool invertPitch;
     public bool invertYaw;
     public bool invertRoll;
-    Vector3 steerAngles;
-    [Header("Steering - Touch")]
-    public VirtualAnalogStick pitchAndYaw;
-    public VirtualAnalogStick roll;
-    [Header("Steering - Gyro")]
-    public bool enableGyro;
-    public Vector3 gyroSensitivity = Vector3.one;
-    public UnityEngine.UI.Toggle gyroToggle;
-    public UnityEngine.UI.Button resetGyro;
-    [Header("Steering - Mouse")]
-    public Vector2 mouseSensitivity = Vector2.one;
-    public float scrollWheelSensitivity = 99;
-    //public AnimationCurve mouseSensitivityCurve;
-
-    Vector3 MouseSteerInput()
-    {
-        Vector2 steer = new Vector2(Input.GetAxis("Mouse X") * mouseSensitivity.x, -Input.GetAxis("Mouse Y") * mouseSensitivity.y);
-        steer.x = Mathf.Clamp(steer.x, -1, 1);
-        steer.y = Mathf.Clamp(steer.y, -1, 1);
-
-        Vector3 values = new Vector3(steer.y, steer.x, 0);
-
-        values.z = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel") * float.MaxValue, -1, 1);
-        return values;
-    }
-    Vector2 mouseInputs;
-
-    Quaternion gyroZero = Quaternion.identity;
-    public Vector3 GyroSteer()
-    {
-        Quaternion relativeGyro = Input.gyro.attitude * Quaternion.Inverse(gyroZero);
-        Vector3 eulerAngles = MiscMath.Vector3Multiply(relativeGyro.eulerAngles, gyroSensitivity);
-        return MiscMath.Vector3Clamp(eulerAngles, Vector3.one * -1, Vector3.one);
-    }
-    public void ResetGyro()
-    {
-        gyroZero = Input.gyro.attitude;
-    }
-
+    public Camera viewCamera;
+    public Transform desiredCameraOrientation;
+    public float cameraMoveSpeed = 2;
+    public float cameraRotateSpeed = 2;
+    Vector3 cameraPosition;
+    Vector3 cameraEulerAngles;
     public Vector3 SteerInput
     {
         get
         {
             Vector3 input = Vector3.zero;
-            // Keyboard input
             input += new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
-            // Touchscreen input
             input += new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
-            if (enableGyro)
+            if (gyroControls != null && gyroControls.enabled)
             {
-                input += GyroSteer();
+                input += gyroControls.Values;
             }
             if (useTouchInputs == false)
             {
-                input += MouseSteerInput();
+                float pitch = -Input.GetAxis("Mouse Y");
+                float yaw = Input.GetAxis("Mouse X");
+                float roll = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel") * float.MaxValue, -1, 1);
+                input += new Vector3(pitch, yaw, roll);
             }
 
             if (invertPitch)
@@ -98,68 +90,30 @@ public class SpaceshipMovement : MovementController
             {
                 input.z = -input.z;
             }
+
+            input = MiscMath.Vector3Clamp(input, Vector3.one * -1, Vector3.one);
+            //input.Scale(steerSensitivity);
+
             return input;
         }
     }
 
-    [Header("Camera")]
-    public Camera viewCamera;
-    public Transform desiredCameraOrientation;
-    public float cameraPositionUpdateTime = 0.01f;
-    public float cameraRotationUpdateTime = 0.1f;
-    Vector3 currentCameraPosition;
-    Quaternion currentCameraRotation;
 
-    Vector3 cameraVelocity;
-    float cameraRotationVelocityTimer;
+    
 
-    [Header("Warping")]
-    public float warpRotateTime = 1;
-    public float warpDelayTime = 1;
-    public float warpTravelTime = 1;
-    public float warpPaddingDistance = 20f;
-    public MeshRenderer testMesh;
 
 
     public override void Awake()
     {
         base.Awake();
         rb.useGravity = false;
-        // Use this for initialization
-
-        // Add a listener so pressing the gyro control button will enable/disable the device's gyro functionality
-        gyroToggle.onValueChanged.AddListener((enabled) => Input.gyro.enabled = enabled && SystemInfo.supportsGyroscope);
-        gyroToggle.onValueChanged.Invoke(gyroToggle.isOn);
     }
-        Input.gyro.enabled = true;
-
-        resetGyro.onClick.AddListener(ResetGyro);
-        brake.onDown.AddListener(() => isBraking = true);
-        brake.onUp.AddListener(() => isBraking = false);
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (manualControlDisabled)
-        {
-            steerAngles = Vector3.zero;
-            return;
-        }
-
-        steerAngles = SteerInput;
-
-        if (Input.GetButtonDown("Warp") && testMesh != null)
-        {
-            InitiateAutomaticAction(Warp(testMesh.bounds));
-        }
-
-    }
-
+    
     private void FixedUpdate()
     {
-        if (!manualControlDisabled)
+        float desiredVelocity = MoveInput;
+        if (desiredVelocity != 0)
         {
-            float desiredVelocity = MoveInput;
             if (desiredVelocity > 0)
             {
                 desiredVelocity *= forwardSpeed;
@@ -167,99 +121,113 @@ public class SpaceshipMovement : MovementController
             else
             {
                 desiredVelocity *= reverseSpeed;
-            };
-
-            // If velocity is being updated OR
-            // Keyboard brake button is being held OR
-            // Braking bool has been activated by touch function OR
-            // Auto-braking is enabled
-            if (desiredVelocity != 0 || Input.GetButton("Brake") || isBraking || autoBrake)
-            {
-                rb.velocity = Vector3.MoveTowards(rb.velocity, transform.forward * desiredVelocity, acceleration * Time.fixedDeltaTime);//rb.MovePosition(transform.position + distanceToMove * transform.forward);
             }
-            
-            Quaternion steerRotation = Quaternion.Euler(MiscMath.Vector3Multiply(steerAngles, steerSpeed) * Time.fixedDeltaTime);
-            rb.MoveRotation(transform.rotation * steerRotation);
-            if (steerAngles.magnitude > 0) // If player is steering and also moving due to velocity, slowly counter and cancel current velocity so the player can properly align themselves
-            {
-                rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * steerAngles.magnitude * Time.fixedDeltaTime);
-            }
+            //rb.AddForce(desiredVelocity * Time.fixedDeltaTime * transform.forward, ForceMode.Force);
+            rb.velocity = Vector3.MoveTowards(rb.velocity, desiredVelocity * transform.forward, acceleration * Time.fixedDeltaTime);
         }
+
+        Vector3 steer = stationaryTurnSpeed;
+        steer.Scale(SteerInput);
+        rb.MoveRotation(transform.rotation * Quaternion.Euler(steer * Time.fixedDeltaTime));
+
+        if (BrakingMovement) // If changing velocity, or braking, shift velocity towards desired speed and direction
+        {
+            rb.velocity = Vector3.MoveTowards(rb.velocity, Vector3.zero, deceleration * Time.fixedDeltaTime);
+        }
+        if (steer.magnitude > 0 || BrakingRotation) // If rotation brake is active, slowly counter and cancel current velocity so the player can properly align themselves
+        {
+            rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * Time.fixedDeltaTime);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        float rotateTimer = Time.deltaTime * cameraRotateSpeed;
+        /*
+        Quaternion relativeRotation = MiscMath.WorldToLocalRotation(desiredCameraOrientation.rotation, transform);
+        Vector3 localAngles = relativeRotation.eulerAngles;
+        cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
+        cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
+        cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
+        viewCamera.transform.rotation = transform.rotation;// * Quaternion.Euler(cameraEulerAngles);
+        */
+        
+        Vector3 localAngles = desiredCameraOrientation.eulerAngles;
+        cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
+        cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
+        cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
+        viewCamera.transform.rotation = Quaternion.Euler(cameraEulerAngles);
+        
+
+
+        float moveTimer = Time.deltaTime * cameraMoveSpeed;
+        cameraPosition = Vector3.Lerp(cameraPosition, desiredCameraOrientation.position - transform.position, moveTimer);
+        viewCamera.transform.position = cameraPosition + transform.position;
+
+        /*
+
+        // Tether camera position so it doesn't move too far away from the desired orientation
+        // Tether camera rotation so it doesn't rotate any further away from the ship than the angle specified by the desired orientation
         
         // Calculate camera position, accounting for physics
         currentCameraPosition = Vector3.SmoothDamp(currentCameraPosition, desiredCameraOrientation.position, ref cameraVelocity, cameraPositionUpdateTime);
         // Calculate camera rotation, accounting for physics
         float timer = Mathf.SmoothDamp(0f, 1f, ref cameraRotationVelocityTimer, cameraRotationUpdateTime);
         currentCameraRotation = Quaternion.Slerp(currentCameraRotation, desiredCameraOrientation.rotation, timer);
-    }
 
-    private void LateUpdate()
-    {
-        // Produce a viewing camera position whose distance is clamped relative to the player transform, so it doesn't get too far away when the player is moving at high speeds.
-        float correctDistance = Vector3.Distance(transform.position, desiredCameraOrientation.position);
-        Vector3 relativePositionWithCorrectDistance = (currentCameraPosition - transform.position).normalized * correctDistance;
+        Vector3 position = currentCameraPosition;
+
+
+        Vector3 fromDesiredToCamera = position - desiredCameraOrientation.position;
+        float desiredDistance = Vector3.Distance(desiredCameraOrientation.position, transform.position) * maxCameraTetherDistanceMultiplier;
+        if (fromDesiredToCamera.magnitude > desiredDistance)
+        {
+            fromDesiredToCamera = fromDesiredToCamera.normalized * desiredDistance;
+        }
+        position = fromDesiredToCamera + desiredCameraOrientation.position;
+
+        // Clamp camera rotation if beyond field of view plus padding
+        Quaternion rotation = currentCameraRotation;
+        Quaternion rotatedDirectlyTowardsPosition = Quaternion.LookRotation(transform.position - currentCameraPosition, transform.up);
+        float angle = Quaternion.Angle(rotation, rotatedDirectlyTowardsPosition);
+        float maxAngle = Vector3.Angle(desiredCameraOrientation.forward, transform.position - desiredCameraOrientation.position);
+        if (angle > maxAngle)
+        {
+            rotation = Quaternion.RotateTowards(rotation, rotatedDirectlyTowardsPosition, angle - maxAngle);
+        }
+
+
+        
+        
 
         // Update viewing camera orientation
-        viewCamera.transform.rotation = currentCameraRotation;
-        viewCamera.transform.position = transform.position + relativePositionWithCorrectDistance;
+        viewCamera.transform.rotation = rotation;
+        viewCamera.transform.position = position;
+        
 
+        
+        Vector3 position = currentCameraPosition - desiredCameraOrientation.position;
+        float distance = Vector3.Distance(desiredCameraOrientation.position, transform.position);
+        if (position.magnitude > distance)
+        {
+            position = position.normalized * distance;
+        }
+        position += desiredCameraOrientation.position;
+        
+        // Update viewing camera orientation
+        viewCamera.transform.rotation = currentCameraRotation;
+        viewCamera.transform.position = position;
+
+        */
     }
 
     public override void SetControlsToComputerOrMobile()
     {
         base.SetControlsToComputerOrMobile();
         speedControl.gameObject.SetActive(useTouchInputs);
-        brake.gameObject.SetActive(useTouchInputs);
-        pitchAndYaw.gameObject.SetActive(useTouchInputs);
+        movementBrake.gameObject.SetActive(useTouchInputs && autoBrake == false);
+        pitchAndYaw.gameObject.SetActive(useTouchInputs && autoBrake == false);
         roll.gameObject.SetActive(useTouchInputs);
-
-        gyroToggle.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
-        resetGyro.gameObject.SetActive(useTouchInputs && SystemInfo.supportsGyroscope);
-    }
-
-
-
-
-
-    public IEnumerator Warp(Bounds thingToWarpTo)
-    {
-        rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        
-        Quaternion oldRotation = transform.rotation;
-        Quaternion lookingTowardsDestination = Quaternion.LookRotation(thingToWarpTo.center - transform.position);
-
-        float timer = 0;
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / warpRotateTime;
-            timer = Mathf.Clamp01(timer);
-
-            //transform.rotation = Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer);
-            rb.MoveRotation(Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer));
-
-            yield return null;
-        }
-
-        yield return new WaitForSeconds(warpDelayTime);
-
-        Vector3 oldPosition = transform.position;
-        Vector3 destinationPoint = (oldPosition - thingToWarpTo.center).normalized * (thingToWarpTo.extents.magnitude + warpPaddingDistance);
-
-        timer = 0;
-        while (timer != 1)
-        {
-            timer += Time.deltaTime / warpTravelTime;
-            timer = Mathf.Clamp01(timer);
-
-            transform.position = Vector3.Lerp(oldPosition, destinationPoint, timer);
-
-            yield return null;
-        }
-
-        manualControlDisabled = false;
-
-        rb.isKinematic = false;
+        rotationBrake.gameObject.SetActive(useTouchInputs);
     }
 }
