@@ -25,7 +25,7 @@ public class SpaceshipMovement : MovementController
 
     [Header("Steering")]
     public Vector3 steerSpeed = Vector3.one * 60;
-    public float angularVelocityDampenSpeed = 50;
+    public float angularVelocityDampenSpeed = 1;
     public bool invertPitch;
     public bool invertYaw;
     public bool invertRoll;
