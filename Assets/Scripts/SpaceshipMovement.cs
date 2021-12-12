@@ -49,7 +49,6 @@ public class SpaceshipMovement : MovementController
 
     [Header("Camera control")]
     public Vector2 mouseSensitivity = Vector2.one * 0.3f;
-    public Vector3 gyroSensitivity = Vector2.one;
     public bool invertPitch;
     public bool invertYaw;
     public bool invertRoll;
@@ -229,5 +228,6 @@ public class SpaceshipMovement : MovementController
         pitchAndYaw.gameObject.SetActive(useTouchInputs && autoBrake == false);
         roll.gameObject.SetActive(useTouchInputs);
         rotationBrake.gameObject.SetActive(useTouchInputs);
+        gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
     }
 }
