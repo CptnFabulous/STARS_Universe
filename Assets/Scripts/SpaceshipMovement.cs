@@ -17,7 +17,7 @@ public class SpaceshipMovement : MovementController
     public float reverseSpeed = 50;
     public float acceleration = 125;
     public float deceleration = 125;
-    public bool autoBrake = true;
+    public bool autoBrakeVelocity;
     public float MoveInput
     {
         get
@@ -31,7 +31,7 @@ public class SpaceshipMovement : MovementController
     {
         get
         {
-            return Input.GetButton("Brake Movement") || movementBrake.Held || autoBrake;
+            return Input.GetButton("Brake Movement") || movementBrake.Held || (autoBrakeVelocity && MoveInput != 0);
         }
     }
 
@@ -39,11 +39,12 @@ public class SpaceshipMovement : MovementController
     public Vector3 steerSpeedPerVelocityUnit = Vector3.one * 0.2f;
     public Vector3 stationaryTurnSpeed = Vector3.one * 60;
     public float angularVelocityDampenSpeed = 1;
+    public bool autoBrakeRotation;
     public bool BrakingRotation
     {
         get
         {
-            return Input.GetButton("Brake Rotation") || rotationBrake.Held || autoBrake;
+            return Input.GetButton("Brake Rotation") || rotationBrake.Held || autoBrakeRotation;
         }
     }
 
@@ -224,10 +225,10 @@ public class SpaceshipMovement : MovementController
     {
         base.SetControlsToComputerOrMobile();
         speedControl.gameObject.SetActive(useTouchInputs);
-        movementBrake.gameObject.SetActive(useTouchInputs && autoBrake == false);
-        pitchAndYaw.gameObject.SetActive(useTouchInputs && autoBrake == false);
+        movementBrake.gameObject.SetActive(useTouchInputs && autoBrakeVelocity == false);
+        pitchAndYaw.gameObject.SetActive(useTouchInputs);
         roll.gameObject.SetActive(useTouchInputs);
-        rotationBrake.gameObject.SetActive(useTouchInputs);
+        rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
         gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
     }
 }
