@@ -5,13 +5,29 @@ using UnityEngine;
 public class GyroSteeringWheel : MonoBehaviour
 {
     public Vector3 sensitivity = Vector3.one * 0.2f;
+    public bool invertX;
+    public bool invertY;
+    public bool invertZ;
     public UnityEngine.UI.Button resetValues;
 
     public Vector3 Values
     {
         get
         {
-            return angles;
+            Vector3 input = angles;
+            if (invertX)
+            {
+                input.x = -input.x;
+            }
+            if (invertY)
+            {
+                input.y = -input.y;
+            }
+            if (invertZ)
+            {
+                input.z = -input.z;
+            }
+            return input;
         }
     }
     Vector3 angles;
