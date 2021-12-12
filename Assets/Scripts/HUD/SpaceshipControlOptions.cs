@@ -38,7 +38,7 @@ public class SpaceshipControlOptions : OptionsMenu
         player.mouseSensitivity.x = OptionsMenu.SliderValueToSensitivity(mouseYaw, maxMouseSensitivity);
         player.mouseSensitivity.y = OptionsMenu.SliderValueToSensitivity(mousePitch, maxMouseSensitivity);
 
-        player.gyroControls.enabled = enableGyroscope && SystemInfo.supportsGyroscope;
+        player.gyroControls.enabled = enableGyroscope.isOn && SystemInfo.supportsGyroscope;
         player.gyroControls.sensitivity.x = OptionsMenu.SliderValueToSensitivity(gyroPitch, maxGyroSensitivity);
         player.gyroControls.sensitivity.y = OptionsMenu.SliderValueToSensitivity(gyroYaw, maxGyroSensitivity);
         player.gyroControls.sensitivity.z = OptionsMenu.SliderValueToSensitivity(gyroRoll, maxGyroSensitivity);
@@ -100,6 +100,7 @@ public class SpaceshipControlOptions : OptionsMenu
         mouseYaw.onValueChanged.AddListener((_) => OnOptionsChanged());
         mousePitch.onValueChanged.AddListener((_) => OnOptionsChanged());
 
+        enableGyroscope.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroPitch.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroYaw.onValueChanged.AddListener((_) => OnOptionsChanged());
         gyroRoll.onValueChanged.AddListener((_) => OnOptionsChanged());
