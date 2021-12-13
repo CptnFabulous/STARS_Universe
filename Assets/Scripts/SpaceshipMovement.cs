@@ -117,6 +117,11 @@ public class SpaceshipMovement : MovementController
     }
     private void FixedUpdate()
     {
+        if (manualControlDisabled)
+        {
+            return;
+        }
+        
         float desiredVelocity = MoveInput;
         if (desiredVelocity != 0)
         {
