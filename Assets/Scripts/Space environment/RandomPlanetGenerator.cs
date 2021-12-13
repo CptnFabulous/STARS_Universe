@@ -11,6 +11,7 @@ public class RandomPlanetGenerator : MonoBehaviour
     public float maxScale = 10;
     public Mesh[] shapes;
     public Material[] materialTypes;
+    public string planetTag = "Planet";
 
     void GeneratePlanets()
     {
@@ -33,6 +34,7 @@ public class RandomPlanetGenerator : MonoBehaviour
             newPlanet.transform.localPosition = position;
             newPlanet.transform.localRotation = rotation;
             newPlanet.transform.localScale = planetScaleValues;
+            newPlanet.tag = planetTag;
 
             //Debug.Log("Assigning mesh data");
             MeshFilter filter = newPlanet.AddComponent<MeshFilter>();

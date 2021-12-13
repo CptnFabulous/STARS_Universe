@@ -6,6 +6,7 @@ public abstract class MovementController : MonoBehaviour
 {
     [HideInInspector] public PlayerHandler player;
     [HideInInspector] public Rigidbody rb;
+    [HideInInspector] public Collider c;
     IEnumerator currentAutoAction;
 
     public bool useTouchInputs;
@@ -16,6 +17,7 @@ public abstract class MovementController : MonoBehaviour
     {
         player = GetComponent<PlayerHandler>();
         rb = GetComponent<Rigidbody>();
+        c = GetComponent<Collider>();
     }
 
     public virtual void SetControlsToComputerOrMobile()
@@ -37,6 +39,7 @@ public abstract class MovementController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         }
         Cursor.visible = useTouchInputs;
+
         player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
     }
 

@@ -102,13 +102,23 @@ public class SpaceshipMovement : MovementController
     
 
 
+    [Header("Warping")]
+    public SpaceshipWarpMenu warpMenu;
 
     public override void Awake()
     {
         base.Awake();
         rb.useGravity = false;
+
+        warpMenu.ship = this;
     }
-    
+    private void Update()
+    {
+        if (Input.GetButtonDown("Warp") && warpMenu != null && warpMenu.gameObject.activeInHierarchy == false)
+        {
+            warpMenu.Enter();
+        }
+    }
     private void FixedUpdate()
     {
         float desiredVelocity = MoveInput;
@@ -230,5 +240,10 @@ public class SpaceshipMovement : MovementController
         roll.gameObject.SetActive(useTouchInputs);
         rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
         gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Collided with " + collision.collider);
     }
 }
