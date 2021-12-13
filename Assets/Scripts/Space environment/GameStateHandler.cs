@@ -96,7 +96,6 @@ public class GameStateHandler : MonoBehaviour
         playerHandler.Controls.enabled = true;
         Debug.Log("Resuming game");
 
-        pauseButton.gameObject.SetActive(playerHandler.Controls.useTouchInputs);
         playerHandler.Controls.SetControlsToComputerOrMobile();
 
         CurrentState = PlayerState.Active;
