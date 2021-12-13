@@ -57,6 +57,7 @@ public class SpaceshipMovement : MovementController
     public Transform desiredCameraOrientation;
     public float cameraMoveSpeed = 2;
     public float cameraRotateSpeed = 2;
+    public float rotationForceToBreakCameraTether = 2;
     Vector3 cameraPosition;
     Vector3 cameraEulerAngles;
     public Vector3 SteerInput
@@ -92,15 +93,10 @@ public class SpaceshipMovement : MovementController
             }
 
             input = MiscMath.Vector3Clamp(input, Vector3.one * -1, Vector3.one);
-            //input.Scale(steerSensitivity);
 
             return input;
         }
     }
-
-
-    
-
 
     [Header("Warping")]
     public SpaceshipWarpMenu warpMenu;
@@ -149,29 +145,30 @@ public class SpaceshipMovement : MovementController
             rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * Time.fixedDeltaTime);
         }
     }
-
     private void LateUpdate()
     {
-        float rotateTimer = Time.deltaTime * cameraRotateSpeed;
-        /*
-        Quaternion relativeRotation = MiscMath.WorldToLocalRotation(desiredCameraOrientation.rotation, transform);
-        Vector3 localAngles = relativeRotation.eulerAngles;
-        cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
-        cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
-        cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
-        viewCamera.transform.rotation = transform.rotation;// * Quaternion.Euler(cameraEulerAngles);
-        */
-        
-        Vector3 localAngles = desiredCameraOrientation.eulerAngles;
-        cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
-        cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
-        cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
+        if (rb.angularVelocity.magnitude < rotationForceToBreakCameraTether)
+        {
+            float rotateTimer = Time.deltaTime * cameraRotateSpeed;
+            /*
+            Quaternion relativeRotation = MiscMath.WorldToLocalRotation(desiredCameraOrientation.rotation, transform);
+            Vector3 localAngles = relativeRotation.eulerAngles;
+            cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
+            cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
+            cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
+            viewCamera.transform.rotation = transform.rotation;// * Quaternion.Euler(cameraEulerAngles);
+            */
+
+            Vector3 localAngles = desiredCameraOrientation.eulerAngles;
+            cameraEulerAngles.x = Mathf.LerpAngle(cameraEulerAngles.x, localAngles.x, rotateTimer);
+            cameraEulerAngles.y = Mathf.LerpAngle(cameraEulerAngles.y, localAngles.y, rotateTimer);
+            cameraEulerAngles.z = Mathf.LerpAngle(cameraEulerAngles.z, localAngles.z, rotateTimer);
+
+            float moveTimer = Time.deltaTime * cameraMoveSpeed;
+            cameraPosition = Vector3.Lerp(cameraPosition, desiredCameraOrientation.position - transform.position, moveTimer);
+        }
+
         viewCamera.transform.rotation = Quaternion.Euler(cameraEulerAngles);
-        
-
-
-        float moveTimer = Time.deltaTime * cameraMoveSpeed;
-        cameraPosition = Vector3.Lerp(cameraPosition, desiredCameraOrientation.position - transform.position, moveTimer);
         viewCamera.transform.position = cameraPosition + transform.position;
 
         /*
@@ -230,7 +227,6 @@ public class SpaceshipMovement : MovementController
 
         */
     }
-
     public override void SetControlsToComputerOrMobile()
     {
         base.SetControlsToComputerOrMobile();
