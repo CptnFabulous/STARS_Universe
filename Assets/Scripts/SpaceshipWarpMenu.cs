@@ -11,6 +11,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
     public float warpRotateTime = 1;
     public float warpDelayTime = 1;
     public float warpTravelTime = 1;
+    public AnimationCurve speedCurve = AnimationCurve.Linear(0, 0, 1, 1);
     public float warpPaddingDistance = 20f;
     public string planetCheckTag = "Planet";
 
@@ -107,8 +108,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
             timer += Time.deltaTime / warpTravelTime;
             timer = Mathf.Clamp01(timer);
 
-            //transform.position = Vector3.Lerp(oldPosition, destinationPoint, timer);
-            ship.transform.position = Vector3.Lerp(oldPosition, newPosition, timer);
+            ship.transform.position = Vector3.Lerp(oldPosition, newPosition, speedCurve.Evaluate(timer));
 
             yield return null;
         }
