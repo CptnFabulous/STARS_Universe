@@ -41,26 +41,10 @@ public class SpaceshipMovement : MovementController
     public bool steerIndependentOfVelocity;
     public float angularVelocityDampenSpeed = 1;
     public bool autoBrakeRotation;
-    public bool BrakingRotation
-    {
-        get
-        {
-            return Input.GetButton("Brake Rotation") || rotationBrake.Held || autoBrakeRotation;
-        }
-    }
-
-    [Header("Camera control")]
-    public Vector2 mouseSensitivity = Vector2.one * 0.3f;
     public bool invertPitch;
     public bool invertYaw;
     public bool invertRoll;
-    public Camera viewCamera;
-    public Transform desiredCameraOrientation;
-    public float cameraMoveSpeed = 2;
-    public float cameraRotateSpeed = 2;
-    public float rotationForceToBreakCameraTether = 2;
-    Vector3 cameraPosition;
-    Vector3 cameraEulerAngles;
+    public Vector2 mouseSensitivity = Vector2.one * 0.3f;
     public Vector3 SteerInput
     {
         get
@@ -98,6 +82,22 @@ public class SpaceshipMovement : MovementController
             return input;
         }
     }
+    public bool BrakingRotation
+    {
+        get
+        {
+            return Input.GetButton("Brake Rotation") || rotationBrake.Held || autoBrakeRotation;
+        }
+    }
+
+    [Header("Camera")]
+    public Camera viewCamera;
+    public Transform desiredCameraOrientation;
+    public float cameraMoveSpeed = 2;
+    public float cameraRotateSpeed = 2;
+    public float rotationForceToBreakCameraTether = 2;
+    Vector3 cameraPosition;
+    Vector3 cameraEulerAngles;
 
     [Header("Warping")]
     public SpaceshipWarpMenu warpMenu;
