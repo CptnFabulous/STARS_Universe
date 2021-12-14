@@ -101,6 +101,11 @@ public class SpaceshipMovement : MovementController
     [Header("Warping")]
     public SpaceshipWarpMenu warpMenu;
 
+    [Header("Cosmetics")]
+    public ParticleSystem exhaust;
+    public float exhaustSpeedIdle = 5;
+    public float exhaustSpeedMaxed = 20;
+
     public override void Awake()
     {
         base.Awake();
@@ -176,61 +181,9 @@ public class SpaceshipMovement : MovementController
         viewCamera.transform.rotation = Quaternion.Euler(cameraEulerAngles);
         viewCamera.transform.position = cameraPosition + transform.position;
 
-        /*
-
-        // Tether camera position so it doesn't move too far away from the desired orientation
-        // Tether camera rotation so it doesn't rotate any further away from the ship than the angle specified by the desired orientation
         
-        // Calculate camera position, accounting for physics
-        currentCameraPosition = Vector3.SmoothDamp(currentCameraPosition, desiredCameraOrientation.position, ref cameraVelocity, cameraPositionUpdateTime);
-        // Calculate camera rotation, accounting for physics
-        float timer = Mathf.SmoothDamp(0f, 1f, ref cameraRotationVelocityTimer, cameraRotationUpdateTime);
-        currentCameraRotation = Quaternion.Slerp(currentCameraRotation, desiredCameraOrientation.rotation, timer);
-
-        Vector3 position = currentCameraPosition;
-
-
-        Vector3 fromDesiredToCamera = position - desiredCameraOrientation.position;
-        float desiredDistance = Vector3.Distance(desiredCameraOrientation.position, transform.position) * maxCameraTetherDistanceMultiplier;
-        if (fromDesiredToCamera.magnitude > desiredDistance)
-        {
-            fromDesiredToCamera = fromDesiredToCamera.normalized * desiredDistance;
-        }
-        position = fromDesiredToCamera + desiredCameraOrientation.position;
-
-        // Clamp camera rotation if beyond field of view plus padding
-        Quaternion rotation = currentCameraRotation;
-        Quaternion rotatedDirectlyTowardsPosition = Quaternion.LookRotation(transform.position - currentCameraPosition, transform.up);
-        float angle = Quaternion.Angle(rotation, rotatedDirectlyTowardsPosition);
-        float maxAngle = Vector3.Angle(desiredCameraOrientation.forward, transform.position - desiredCameraOrientation.position);
-        if (angle > maxAngle)
-        {
-            rotation = Quaternion.RotateTowards(rotation, rotatedDirectlyTowardsPosition, angle - maxAngle);
-        }
-
-
-        
-        
-
-        // Update viewing camera orientation
-        viewCamera.transform.rotation = rotation;
-        viewCamera.transform.position = position;
-        
-
-        
-        Vector3 position = currentCameraPosition - desiredCameraOrientation.position;
-        float distance = Vector3.Distance(desiredCameraOrientation.position, transform.position);
-        if (position.magnitude > distance)
-        {
-            position = position.normalized * distance;
-        }
-        position += desiredCameraOrientation.position;
-        
-        // Update viewing camera orientation
-        viewCamera.transform.rotation = currentCameraRotation;
-        viewCamera.transform.position = position;
-
-        */
+        ParticleSystem.MainModule main = exhaust.main;
+        main.startSpeed = Mathf.Lerp(exhaustSpeedIdle, exhaustSpeedMaxed, MoveInput);
     }
     public override void SetControlsToComputerOrMobile()
     {
