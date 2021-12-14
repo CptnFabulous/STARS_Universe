@@ -127,7 +127,8 @@ public class SpaceshipMovement : MovementController
         {
             return;
         }
-        
+
+        #region Obtain speed value and accelerate/reverse
         float desiredVelocity = MoveInput;
         if (desiredVelocity != 0)
         {
@@ -142,7 +143,9 @@ public class SpaceshipMovement : MovementController
             //rb.AddForce(desiredVelocity * Time.fixedDeltaTime * transform.forward, ForceMode.Force);
             rb.velocity = Vector3.MoveTowards(rb.velocity, desiredVelocity * transform.forward, acceleration * Time.fixedDeltaTime);
         }
+        #endregion
 
+        #region Steering
         Vector3 steer = SteerInput * Time.fixedDeltaTime; // Obtains steer input, multiplied by fixed delta time so movement is consistent regardless of framerate and timestep
         if (steerIndependentOfVelocity || rb.velocity.magnitude <= 0) // Multiply by steer speed values
         {
@@ -159,7 +162,9 @@ public class SpaceshipMovement : MovementController
         }
         // Rotate plane based on steer vector
         rb.MoveRotation(transform.rotation * Quaternion.Euler(steer));
+        #endregion
 
+        #region Brake movement and rotation
         if (BrakingMovement) // If changing velocity, or braking, shift velocity towards desired speed and direction
         {
             rb.velocity = Vector3.MoveTowards(rb.velocity, Vector3.zero, deceleration * Time.fixedDeltaTime);
@@ -168,8 +173,7 @@ public class SpaceshipMovement : MovementController
         {
             rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * Time.fixedDeltaTime);
         }
-
-        
+        #endregion
     }
     private void LateUpdate()
     {
