@@ -97,7 +97,9 @@ public class SpaceshipWarpMenu : MonoBehaviour
         yield return new WaitForSeconds(warpDelayTime);
 
         Vector3 oldPosition = transform.position;
-        Vector3 destinationPoint = (oldPosition - thingToWarpTo.center).normalized * (thingToWarpTo.extents.magnitude + warpPaddingDistance);
+        Vector3 destinationCentre = thingToWarpTo.center;
+        Vector3 offsetToPreventCollision = (oldPosition - destinationCentre).normalized * (thingToWarpTo.extents.magnitude + warpPaddingDistance);
+        Vector3 newPosition = thingToWarpTo.center + offsetToPreventCollision;
 
         timer = 0;
         while (timer != 1)
@@ -106,7 +108,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
             timer = Mathf.Clamp01(timer);
 
             //transform.position = Vector3.Lerp(oldPosition, destinationPoint, timer);
-            ship.transform.position = Vector3.Lerp(oldPosition, destinationPoint, timer);
+            ship.transform.position = Vector3.Lerp(oldPosition, newPosition, timer);
 
             yield return null;
         }
