@@ -38,6 +38,7 @@ public class SpaceshipMovement : MovementController
     [Header("Steering")]
     public Vector3 steerSpeedPerVelocityUnit = Vector3.one * 0.2f;
     public Vector3 stationaryTurnSpeed = Vector3.one * 60;
+    public bool steerIndependentOfVelocity;
     public float angularVelocityDampenSpeed = 1;
     public bool autoBrakeRotation;
     public bool BrakingRotation
@@ -142,9 +143,22 @@ public class SpaceshipMovement : MovementController
             rb.velocity = Vector3.MoveTowards(rb.velocity, desiredVelocity * transform.forward, acceleration * Time.fixedDeltaTime);
         }
 
-        Vector3 steer = stationaryTurnSpeed;
-        steer.Scale(SteerInput);
-        rb.MoveRotation(transform.rotation * Quaternion.Euler(steer * Time.fixedDeltaTime));
+        Vector3 steer = SteerInput * Time.fixedDeltaTime; // Obtains steer input, multiplied by fixed delta time so movement is consistent regardless of framerate and timestep
+        if (steerIndependentOfVelocity || rb.velocity.magnitude <= 0) // Multiply by steer speed values
+        {
+            // If ship is stopped or is allowed to turn regardless of velocity, use default turn value
+            steer.Scale(stationaryTurnSpeed);
+        }
+        else
+        {
+            // If steering depends on velocity (like a conventional plane), multiply steer speed by current velocity
+            steer.Scale(steerSpeedPerVelocityUnit * rb.velocity.magnitude);
+            // Rotate velocity as well so plane's movement direction steers properly as well as their rotation. A conventional plane can't strafe!
+            float velocitySteerMagnitude = steer.magnitude * Mathf.Deg2Rad;
+            rb.velocity = Vector3.RotateTowards(rb.velocity, transform.forward, velocitySteerMagnitude, 0);
+        }
+        // Rotate plane based on steer vector
+        rb.MoveRotation(transform.rotation * Quaternion.Euler(steer));
 
         if (BrakingMovement) // If changing velocity, or braking, shift velocity towards desired speed and direction
         {
@@ -154,6 +168,8 @@ public class SpaceshipMovement : MovementController
         {
             rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, angularVelocityDampenSpeed * Time.fixedDeltaTime);
         }
+
+        
     }
     private void LateUpdate()
     {
