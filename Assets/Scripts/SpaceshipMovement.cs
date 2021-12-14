@@ -215,9 +215,4 @@ public class SpaceshipMovement : MovementController
         rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
         gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("Collided with " + collision.collider);
-    }
 }
