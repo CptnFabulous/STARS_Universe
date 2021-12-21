@@ -101,6 +101,7 @@ public class SpaceshipMovement : MovementController
 
     [Header("Warping")]
     public SpaceshipWarpMenu warpMenu;
+    public UnityEngine.UI.Button warpButton;
 
     [Header("Cosmetics")]
     public ParticleSystem exhaust;
@@ -113,6 +114,7 @@ public class SpaceshipMovement : MovementController
         rb.useGravity = false;
 
         warpMenu.ship = this;
+        warpButton.onClick.AddListener(warpMenu.Enter);
     }
     private void Update()
     {
@@ -214,5 +216,6 @@ public class SpaceshipMovement : MovementController
         roll.gameObject.SetActive(useTouchInputs);
         rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
         gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
+        warpButton.gameObject.SetActive(useTouchInputs);
     }
 }
