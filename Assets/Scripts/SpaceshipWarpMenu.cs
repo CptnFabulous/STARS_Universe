@@ -54,8 +54,10 @@ public class SpaceshipWarpMenu : MonoBehaviour
         locationList.AddOptions(bodies);
         gameObject.SetActive(true);
         ship.manualControlDisabled = true;
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(locationList.gameObject);
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        
     }
     public void Exit()
     {
@@ -76,7 +78,6 @@ public class SpaceshipWarpMenu : MonoBehaviour
     {
         ship.manualControlDisabled = true;
         ship.rb.isKinematic = true;
-        ship.c.enabled = false;
         ship.rb.velocity = Vector3.zero;
         ship.rb.angularVelocity = Vector3.zero;
 
@@ -88,10 +89,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
         {
             timer += Time.deltaTime / warpRotateTime;
             timer = Mathf.Clamp01(timer);
-
-            //transform.rotation = Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer);
             ship.transform.rotation = Quaternion.Lerp(oldRotation, lookingTowardsDestination, timer);
-
             yield return null;
         }
 
@@ -107,15 +105,12 @@ public class SpaceshipWarpMenu : MonoBehaviour
         {
             timer += Time.deltaTime / warpTravelTime;
             timer = Mathf.Clamp01(timer);
-
             ship.transform.position = Vector3.Lerp(oldPosition, newPosition, speedCurve.Evaluate(timer));
-
             yield return null;
         }
 
         ship.manualControlDisabled = false;
         ship.rb.isKinematic = false;
-        ship.c.enabled = true;
 
         EndWarp();
     }
