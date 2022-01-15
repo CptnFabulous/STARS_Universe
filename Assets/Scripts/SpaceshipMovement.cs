@@ -118,9 +118,16 @@ public class SpaceshipMovement : MovementController
     }
     private void Update()
     {
-        if (Input.GetButtonDown("Warp") && warpMenu != null && warpMenu.gameObject.activeInHierarchy == false)
+        if (Input.GetButtonDown("Warp") && warpMenu != null)
         {
-            warpMenu.Enter();
+            if (warpMenu.gameObject.activeInHierarchy == false)
+            {
+                warpMenu.Enter();
+            }
+            else
+            {
+                warpMenu.Exit();
+            }
         }
     }
     private void FixedUpdate()
