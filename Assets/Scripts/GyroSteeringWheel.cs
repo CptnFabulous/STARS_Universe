@@ -5,6 +5,7 @@ using UnityEngine;
 public class GyroSteeringWheel : MonoBehaviour
 {
     public Vector3 sensitivity = Vector3.one * 0.2f;
+    public Vector3 deadzones = Vector3.one * 0.5f;
     public bool invertX;
     public bool invertY;
     public bool invertZ;
@@ -15,6 +16,20 @@ public class GyroSteeringWheel : MonoBehaviour
         get
         {
             Vector3 input = angles;
+
+            if (Mathf.Abs(input.x) < deadzones.x)
+            {
+                input.x = 0;
+            }
+            if (Mathf.Abs(input.y) < deadzones.y)
+            {
+                input.y = 0;
+            }
+            if (Mathf.Abs(input.z) < deadzones.z)
+            {
+                input.z = 0;
+            }
+            
             if (invertX)
             {
                 input.x = -input.x;
