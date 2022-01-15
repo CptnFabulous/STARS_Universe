@@ -10,6 +10,25 @@ public class GyroSteeringWheel : MonoBehaviour
     public bool invertY;
     public bool invertZ;
     public UnityEngine.UI.Button resetValues;
+    public HoldableButton enableControls;
+
+    public bool ContinuouslyActive
+    {
+        get
+        {
+            return continuouslyActive;
+        }
+        set
+        {
+            continuouslyActive = value && SystemInfo.supportsGyroscope;
+            
+            // Enables accordingly.
+            // If true, this function is set to true so it's always active.
+            // If false, it's pre-emptively disabled so it won't be on if the player is not holding the button.
+            enabled = continuouslyActive;
+        }
+    }
+    [SerializeField] bool continuouslyActive;
 
     public Vector3 Values
     {
@@ -52,8 +71,11 @@ public class GyroSteeringWheel : MonoBehaviour
     private void Awake()
     {
         resetValues.onClick.AddListener(ResetValues);
-    }
+        enableControls.onDown.AddListener(() => enabled = true);
+        enableControls.onUp.AddListener(() => enabled = false);
 
+        ContinuouslyActive = ContinuouslyActive;
+    }
     private void Start()
     {
         if (gyro == null)
@@ -62,8 +84,6 @@ public class GyroSteeringWheel : MonoBehaviour
         }
         gyro.enabled = true;
     }
-
-
     private void OnEnable()
     {
         if (SystemInfo.supportsGyroscope == false)
@@ -72,8 +92,10 @@ public class GyroSteeringWheel : MonoBehaviour
         }
         ResetValues();
     }
-
-    // Update is called once per frame
+    private void OnDisable()
+    {
+        ResetValues();
+    }
     void Update()
     {
         Vector3 rate = gyro.rotationRate;
@@ -85,5 +107,10 @@ public class GyroSteeringWheel : MonoBehaviour
     public void ResetValues()
     {
         angles = Vector3.zero;
+    }
+    public void SetControlsActiveState(bool usingTouchControls)
+    {
+        resetValues.gameObject.SetActive(continuouslyActive && usingTouchControls && SystemInfo.supportsGyroscope);
+        enableControls.gameObject.SetActive(!continuouslyActive && usingTouchControls && SystemInfo.supportsGyroscope);
     }
 }

@@ -222,7 +222,9 @@ public class SpaceshipMovement : MovementController
         pitchAndYaw.gameObject.SetActive(useTouchInputs);
         roll.gameObject.SetActive(useTouchInputs);
         rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
-        gyroControls.resetValues.gameObject.SetActive(useTouchInputs && gyroControls.enabled && SystemInfo.supportsGyroscope);
+
+        gyroControls.SetControlsActiveState(useTouchInputs);
+
         warpButton.gameObject.SetActive(useTouchInputs);
     }
 }
