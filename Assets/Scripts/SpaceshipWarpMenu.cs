@@ -36,6 +36,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
         enterButton.onClick.AddListener(Enter);
         confirm.onClick.AddListener(InitiateWarp);
         cancel.onClick.AddListener(Exit);
+        gameObject.SetActive(false);
     }
     private void OnEnable()
     {
