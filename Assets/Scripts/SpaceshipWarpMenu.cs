@@ -37,6 +37,10 @@ public class SpaceshipWarpMenu : MonoBehaviour
         confirm.onClick.AddListener(InitiateWarp);
         cancel.onClick.AddListener(Exit);
     }
+    private void OnEnable()
+    {
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(locationList.gameObject);
+    }
 
 
     public void Enter()
@@ -54,7 +58,7 @@ public class SpaceshipWarpMenu : MonoBehaviour
         locationList.AddOptions(bodies);
         gameObject.SetActive(true);
         ship.manualControlDisabled = true;
-        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(locationList.gameObject);
+        
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
         
