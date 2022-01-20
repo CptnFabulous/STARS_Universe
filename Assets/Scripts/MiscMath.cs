@@ -19,6 +19,12 @@ public static class MiscMath
         return vector;
     }
 
+
+    public static Quaternion WorldToLocalRotation(Quaternion worldRotation, Transform target)
+    {
+        return Quaternion.Inverse(target.rotation) * worldRotation;
+    }
+
     public static float RoundToDecimalPlaces(float number, int decimalPlaces)
     {
         for (int i = 0; i < decimalPlaces; i++)
