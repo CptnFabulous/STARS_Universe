@@ -18,11 +18,14 @@ public abstract class MovementController : MonoBehaviour
         player = GetComponent<PlayerHandler>();
         rb = GetComponent<Rigidbody>();
         c = GetComponent<Collider>();
+        useTouchInputs = true;
     }
 
     public virtual void SetControlsToComputerOrMobile()
     {
         Debug.Log("Setting controls");
+
+        //useTouchInputs = Input.touchSupported || forceTouchInputsForDebugging;
 
         // Disable touch inputs if not possible on current hardware
         if (Input.touchSupported == false && forceTouchInputsForDebugging == false)
