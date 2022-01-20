@@ -54,6 +54,26 @@ public abstract class OptionsMenu : MonoBehaviour
     /// </summary>
     public abstract void ApplySettings();
 
+    void AddValueChangedEvent(Slider interactable)
+    {
+        interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
+    }
+    void AddValueChangedEvent(Toggle interactable)
+    {
+        interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
+    }
+    void AddValueChangedEvent(Dropdown interactable)
+    {
+        interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
+    }
+    void AddValueChangedEvent(InputField interactable)
+    {
+        interactable.onValueChanged.AddListener((_) => OnOptionsChanged());
+    }
+    void AddValueChangedEvent(Button interactable)
+    {
+        interactable.onClick.AddListener(OnOptionsChanged);
+    }
 
     /// <summary>
     /// Update a slider's value to represent a scaled sensitivity value. Some sensitivity values can be very large or small numbers, so this converts them to a slider range designed for better UX
