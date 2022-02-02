@@ -23,7 +23,7 @@ public abstract class MovementController : MonoBehaviour
 
     public virtual void SetControlsToComputerOrMobile()
     {
-        Debug.Log("Setting controls");
+        //Debug.Log("Setting controls");
 
         //useTouchInputs = Input.touchSupported || forceTouchInputsForDebugging;
 
