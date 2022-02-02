@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "464016661180",
+    "firebase_url": "https://stars-universe.firebaseio.com",
+    "project_id": "stars-universe",
+    "storage_bucket": "stars-universe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464016661180:android:26886b9d61791776b18eb9",
+        "android_client_info": {
+          "package_name": "com.STARStv.STARSUniverse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "464016661180-ok9djlq2fap79up8i2n9793av1j3jntt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARLj2IxiW_eQkvv0TVw952iVcCmuR0KRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "464016661180-ok9djlq2fap79up8i2n9793av1j3jntt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
