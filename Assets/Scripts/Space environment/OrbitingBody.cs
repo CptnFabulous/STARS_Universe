@@ -13,8 +13,7 @@ public class OrbitingBody : MonoBehaviour
 
     [Header("Cosmetics")]
     public LineRenderer orbitPath;
-    public int minSegmentNumber = 32;
-    public float maxSegmentDistance = 50;
+    public int segmentNumber = 180;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +21,7 @@ public class OrbitingBody : MonoBehaviour
         Transform orbitAxisTransform = Instantiate(new GameObject(), transform.parent).transform;
         orbitAxisTransform.name = name + "'s orbit axis";
         orbitAxisTransform.localPosition = Vector3.zero;
-        orbitAxisTransform.localRotation = Quaternion.LookRotation(transform.position - transform.parent.position, Quaternion.Euler(orbitAxisEulerAngles) * Vector3.forward);
+        orbitAxisTransform.localRotation = Quaternion.LookRotation(transform.position - transform.parent.position, Quaternion.Euler(orbitAxisEulerAngles) * Vector3.up);
         transform.parent = orbitAxisTransform;
 
 
@@ -35,7 +34,8 @@ public class OrbitingBody : MonoBehaviour
             orbitPath.useWorldSpace = false;
             orbitPath.loop = true;
 
-            RenderRing(orbitPath, Vector3.Distance(Vector3.zero, transform.localPosition), minSegmentNumber, maxSegmentDistance);
+            RenderRing(orbitPath, Vector3.Distance(Vector3.zero, transform.localPosition), segmentNumber);
+            //RenderRing(orbitPath, Vector3.Distance(Vector3.zero, transform.localPosition), minSegmentNumber, maxSegmentDistance);
         }
         
     }
@@ -54,17 +54,18 @@ public class OrbitingBody : MonoBehaviour
 
 
 
-    public static void RenderRing(LineRenderer renderer, float radius, int minSegmentNumber, float maxSegmentLength)
+    public static void RenderRing(LineRenderer renderer, float radius, int numberOfSegments/*int minSegmentNumber, float maxSegmentLength*/)
     {
         renderer.useWorldSpace = false;
         renderer.loop = true;
 
-        float circumference = radius * 2 * Mathf.PI;
-        int approxNumberOfSegments = Mathf.RoundToInt(circumference / maxSegmentLength);
-        Vector3[] points = new Vector3[Mathf.Max(approxNumberOfSegments, minSegmentNumber)]; // Calculates number of segments and makes a Vector3 array
+        //float circumference = radius * 2 * Mathf.PI;
+        //int numberOfSegments = Mathf.RoundToInt(circumference / maxSegmentLength);
+        Vector3[] points = new Vector3[numberOfSegments]; // Calculates number of segments and makes a Vector3 array
         for (int i = 0; i < points.Length; i++)
         {
             points[i] = radius * (Quaternion.Euler(0, 360 / points.Length * i, 0) * Vector3.forward);
+            Debug.DrawLine(renderer.transform.position, renderer.transform.TransformPoint(points[i]), Color.magenta, 50);
         }
         Debug.Log(points.Length);
         renderer.positionCount = points.Length;
