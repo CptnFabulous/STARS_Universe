@@ -101,6 +101,14 @@ public class SpaceshipNavigationGUI : MonoBehaviour
             compassAxes[i].material.color = axisColours[i];
         }
     }
+    private void Update()
+    {
+        if (Input.GetButtonDown("Advanced Navigation"))
+        {
+            Debug.Log("ComplexGUIActive is now " + !ComplexGUIActive);
+            ComplexGUIActive = !ComplexGUIActive;
+        }
+    }
     void LateUpdate()
     {
         // Identify relative rotation from camera orientation to point at compass position
