@@ -18,8 +18,8 @@ public class OrbitingBody : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Transform orbitAxisTransform = Instantiate(new GameObject(), transform.parent).transform;
-        orbitAxisTransform.name = name + "'s orbit axis";
+        Transform orbitAxisTransform = new GameObject(name + "'s orbit axis").transform;
+        orbitAxisTransform.parent = transform.parent;
         orbitAxisTransform.localPosition = Vector3.zero;
         orbitAxisTransform.localRotation = Quaternion.LookRotation(transform.position - transform.parent.position, Quaternion.Euler(orbitAxisEulerAngles) * Vector3.up);
         transform.parent = orbitAxisTransform;
