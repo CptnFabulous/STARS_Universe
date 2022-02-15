@@ -30,13 +30,12 @@ public class GameStateHandler : MonoBehaviour
     private void Awake()
     {
         playerHandler = GetComponent<PlayerHandler>();
-    }
-    private void Start()
-    {
         // Adds listeners so the buttons work properly
         pauseButton.onClick.AddListener(PauseGame);
         resumeButton.onClick.AddListener(ResumeGame);
-        
+    }
+    private void OnEnable()
+    {
         // Pre-emptively resumes the game to ensure everything is set up correctly
         ResumeGame();
     }
@@ -92,10 +91,15 @@ public class GameStateHandler : MonoBehaviour
 
     public void ResumeGame()
     {
+        if (playerHandler == null)
+        {
+            return;
+        }
+        
         SwitchMenus(headsUpDisplay);
-        playerHandler.Controls.enabled = true;
+        
         Debug.Log("Resuming game");
-
+        playerHandler.Controls.enabled = true;
         playerHandler.Controls.SetControlsToComputerOrMobile();
 
         CurrentState = PlayerState.Active;

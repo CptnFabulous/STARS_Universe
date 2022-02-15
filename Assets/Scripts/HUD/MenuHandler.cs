@@ -79,44 +79,8 @@ public class MenuHandler : MonoBehaviour
 
     public void LoadSceneSimply(string name)
     {
-        SceneManager.LoadScene(name);
-    }
-
-    IEnumerator LoadingScreen(string sceneToLoad, string loadingScreenString)
-    {
-        // Pause the game and bring up the loading screen
-        Time.timeScale = 0;
-        SceneManager.LoadScene(loadingScreenString);
-        
-        // Start loading the new scene
-        AsyncOperation loadNewScene = SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
-        WaitForEndOfFrame updateLoop = new WaitForEndOfFrame();
-        while (loadNewScene.isDone == false)
-        {
-            // Update loop!
-            // Play a looping animation so the player knows the game hasn't crashed
-            // Update progress bar using loadNewScene.progress as a reference
-
-            yield return updateLoop;
-        }
-
-        // Hide progress bar, bring up 'press this to continue' window
-
-        bool activateThisToContinue = false;
-        while (activateThisToContinue == false)
-        {
-            if (Input.GetButtonDown("Submit"))
-            {
-                activateThisToContinue = true;
-            }
-
-            yield return updateLoop;
-        }
-
-
-        // Get rid of the loading screen and unpause the game.
-        SceneManager.UnloadSceneAsync(loadingScreenString);
-        Time.timeScale = 1;
+        //SceneManager.LoadScene(name);
+        LoadingScreen.LoadScene(name);
     }
 
     public void ResetTime(float scale)

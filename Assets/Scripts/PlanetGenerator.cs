@@ -31,8 +31,15 @@ public class PlanetGenerator : MonoBehaviour
     public int randomPlanetCount = 100;
     public bool forceRandomPlanetGeneration;
 
+    List<GameObject> currentPlanets = new List<GameObject>();
+    bool generationComplete = false;
+    public System.Func<bool> GenerationComplete() => () =>
+    {
+        return generationComplete == true;
+    };
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         stringToColour = new Dictionary<string, Color>
         {
@@ -51,6 +58,7 @@ public class PlanetGenerator : MonoBehaviour
             {"grey", Color.grey },
         };
 
+        LoadingScreen.AddCriteriaToFulfil(GenerationComplete());
         StartCoroutine(LoadPlanetsFromDatabase());
     }
 
@@ -79,19 +87,12 @@ public class PlanetGenerator : MonoBehaviour
         }
     }
 
-
-
-
-
     IEnumerator LoadPlanetsFromSnapshot(QuerySnapshot snapshot)
     {
         //Debug.Log("New snapshot (length: " + snapshot.Count + ")");
         for (int i = 0; i < snapshot.Count; i++)
         {
-            //Debug.Log(snapshot[i]);
             
-
-
             string name;
             Vector3 position = RandomPosition();
             Quaternion rotation = RandomRotation();
@@ -127,7 +128,11 @@ public class PlanetGenerator : MonoBehaviour
             name += " planet";
 
             GeneratePlanet(name, position, rotation, size, shapeIndex, materialIndex, retrievedColour, texture);
+
+            Debug.Log("Loaded planet #" + (i + 1) + " out of " + snapshot.Count + " on frame " + Time.frameCount);
         }
+
+        generationComplete = true;
     }
     void LoadRandomPlanets()
     {
@@ -147,7 +152,18 @@ public class PlanetGenerator : MonoBehaviour
             GeneratePlanet(name, position, rotation, scaleValue, shapeIndex, materialIndex, planetColour, null);
         }
 
+        generationComplete = true;
     }
+    /*
+    public static IEnumerator CheckInternetConnection(out bool successful, string testURL = "http://google.com")
+    {
+        if (Application.internetReachability == NetworkReachability.)
+
+        WWW webTest = new WWW(testURL);
+        yield return WaitUntil
+    }
+    */
+
 
     Vector3 RandomPosition()
     {
@@ -164,6 +180,7 @@ public class PlanetGenerator : MonoBehaviour
         GameObject newPlanet = new GameObject(name);
         newPlanet.transform.SetParent(transform);
         newPlanet.tag = planetTag;
+        currentPlanets.Add(newPlanet);
 
         newPlanet.transform.localPosition = position;
         newPlanet.transform.localRotation = rotation;
