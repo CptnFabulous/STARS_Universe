@@ -7,7 +7,7 @@ public class AmbientRotation : MonoBehaviour
     public float rotationSpeed;
     public Vector3 axes;
     public bool randomiseAxes;
-    
+    public bool useUnscaledTime;
     
     
     // Start is called before the first frame update
@@ -22,6 +22,7 @@ public class AmbientRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(axes, rotationSpeed * Time.deltaTime);
+        float deltaTime = useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+        transform.Rotate(axes, rotationSpeed * deltaTime);
     }
 }
