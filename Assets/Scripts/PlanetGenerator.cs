@@ -66,6 +66,12 @@ public class PlanetGenerator : MonoBehaviour
 
     IEnumerator LoadPlanetsFromDatabase()
     {
+        if (forceRandomPlanetGeneration)
+        {
+            LoadRandomPlanets(); // Generate random planets
+            yield break;
+        }
+        
         FirebaseApp app = FirebaseApp.DefaultInstance;//GetInstance(instanceName);
         FirebaseFirestore database = FirebaseFirestore.GetInstance(app);
         CollectionReference collection = database.Collection(databaseCollectionPath);
@@ -77,7 +83,7 @@ public class PlanetGenerator : MonoBehaviour
         });
         QuerySnapshot snapshot = snapshot = snapshotObtainingTask.Result;
 
-        if (snapshot != null && forceRandomPlanetGeneration == false)
+        if (snapshot != null)
         {
             StartCoroutine(LoadPlanetsFromSnapshot(snapshot)); // Generate new planets from snapshot
         }
