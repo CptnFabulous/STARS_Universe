@@ -6,7 +6,7 @@ public class OrbitingBody : MonoBehaviour
 {
     [Header("Orbiting")]
     public float orbitSpeedInDegrees = 60;
-    public Vector3 orbitAxisEulerAngles = Vector3.up;
+    public Vector3 orbitAxisEulerAngles;
 
     [Header("Spin")]
     public float spinSpeed = 15;
@@ -67,7 +67,7 @@ public class OrbitingBody : MonoBehaviour
             points[i] = radius * (Quaternion.Euler(0, 360 / points.Length * i, 0) * Vector3.forward);
             Debug.DrawLine(renderer.transform.position, renderer.transform.TransformPoint(points[i]), Color.magenta, 50);
         }
-        Debug.Log(points.Length);
+        //Debug.Log(points.Length);
         renderer.positionCount = points.Length;
         renderer.SetPositions(points);
     }
