@@ -108,6 +108,7 @@ public class LoadingScreen : MonoBehaviour
         // Waits for objects in the new scene to start running functions that need to occur before entering the level properly
         yield return new WaitForEndOfFrame();
 
+        Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
