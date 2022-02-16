@@ -43,7 +43,7 @@ public abstract class MovementController : MonoBehaviour
         }
         Cursor.visible = useTouchInputs;
 
-        player.PauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
+        player.pauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
     }
 
 

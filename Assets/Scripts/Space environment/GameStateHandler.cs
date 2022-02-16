@@ -33,6 +33,8 @@ public class GameStateHandler : MonoBehaviour
         // Adds listeners so the buttons work properly
         pauseButton.onClick.AddListener(PauseGame);
         resumeButton.onClick.AddListener(ResumeGame);
+        // Pre-emptively resumes the game to ensure everything is set up correctly
+        ResumeGame();
     }
     private void OnEnable()
     {
@@ -60,7 +62,7 @@ public class GameStateHandler : MonoBehaviour
     public void PauseGame()
     {
         SwitchMenus(pauseMenu);
-        playerHandler.Controls.enabled = false;
+        playerHandler.controls.enabled = false;
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -73,7 +75,7 @@ public class GameStateHandler : MonoBehaviour
         PlayerHandler[] players = FindObjectsOfType<PlayerHandler>();
         for (int i = 0; i < players.Length; i++)
         {
-            if (players[i].PauseHandler.CurrentState != PlayerState.InPauseMenu)
+            if (players[i].pauseHandler.CurrentState != PlayerState.InPauseMenu)
             {
                 everybodyIsPaused = false;
                 i = players.Length;
@@ -91,16 +93,23 @@ public class GameStateHandler : MonoBehaviour
 
     public void ResumeGame()
     {
+        /*
         if (playerHandler == null || playerHandler.Controls == null)
         {
+            Debug.Log(playerHandler + ", " + playerHandler.Controls);
             return;
         }
-        
+        */
         SwitchMenus(headsUpDisplay);
-        
+
+        if (playerHandler != null && playerHandler.controls != null)
+        {
+            playerHandler.controls.enabled = true;
+            playerHandler.controls.SetControlsToComputerOrMobile();
+        }
+
         Debug.Log("Resuming game");
-        playerHandler.Controls.enabled = true;
-        playerHandler.Controls.SetControlsToComputerOrMobile();
+        
 
         CurrentState = PlayerState.Active;
 
