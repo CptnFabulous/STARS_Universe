@@ -91,7 +91,7 @@ public class GameStateHandler : MonoBehaviour
 
     public void ResumeGame()
     {
-        if (playerHandler == null)
+        if (playerHandler == null || playerHandler.Controls == null)
         {
             return;
         }
