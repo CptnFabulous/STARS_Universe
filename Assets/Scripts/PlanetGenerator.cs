@@ -66,7 +66,8 @@ public class PlanetGenerator : MonoBehaviour
 
     IEnumerator LoadPlanetsFromDatabase()
     {
-        if (forceRandomPlanetGeneration)
+        yield return StartCoroutine(ConnectionTest.GetStatus());
+        if (forceRandomPlanetGeneration || ConnectionTest.successfulOnLastCheck == false)
         {
             LoadRandomPlanets(); // Generate random planets
             yield break;
