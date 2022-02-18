@@ -11,6 +11,7 @@ public abstract class MovementController : MonoBehaviour
 
     public bool useTouchInputs;
     public bool forceTouchInputsForDebugging;
+    public GameObject touchControlParent;
     [HideInInspector] public bool manualControlDisabled;
 
     public virtual void Awake()
@@ -43,7 +44,7 @@ public abstract class MovementController : MonoBehaviour
         }
         Cursor.visible = useTouchInputs;
 
-        player.pauseHandler.pauseButton.gameObject.SetActive(useTouchInputs);
+        touchControlParent.SetActive(useTouchInputs);
     }
 
 

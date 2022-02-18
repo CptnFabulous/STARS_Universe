@@ -217,14 +217,8 @@ public class SpaceshipMovement : MovementController
     public override void SetControlsToComputerOrMobile()
     {
         base.SetControlsToComputerOrMobile();
-        speedControl.gameObject.SetActive(useTouchInputs);
-        movementBrake.gameObject.SetActive(useTouchInputs && autoBrakeVelocity == false);
-        pitchAndYaw.gameObject.SetActive(useTouchInputs);
-        roll.gameObject.SetActive(useTouchInputs);
-        rotationBrake.gameObject.SetActive(useTouchInputs && autoBrakeRotation == false);
 
-        gyroControls.SetControlsActiveState(useTouchInputs);
-
-        warpButton.gameObject.SetActive(useTouchInputs);
+        movementBrake.gameObject.SetActive(autoBrakeVelocity == false);
+        rotationBrake.gameObject.SetActive(autoBrakeRotation == false);
     }
 }
