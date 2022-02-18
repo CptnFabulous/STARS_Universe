@@ -6,9 +6,10 @@ public class SpaceshipMovement : MovementController
 {
     [Header("Mobile controls")]
     public VirtualAnalogStick speedControl;
-    public HoldableButton movementBrake;
+    public VirtualAnalogStick speedAndRoll;
     public VirtualAnalogStick pitchAndYaw;
     public VirtualAnalogStick roll;
+    public HoldableButton movementBrake;
     public HoldableButton rotationBrake;
     public GyroSteeringWheel gyroControls;
 
@@ -23,7 +24,17 @@ public class SpaceshipMovement : MovementController
         get
         {
             float keyboard = Input.GetAxis("Accelerate/Decelerate");
-            float touch = -(speedControl.Input.x + speedControl.Input.y);
+
+            float touch = 0;
+            if (speedAndRoll != null)
+            {
+                touch += speedAndRoll.Input.y;
+            }
+            if (speedControl != null)
+            {
+                touch += -(speedControl.Input.x + speedControl.Input.y);
+            }
+
             return touch + keyboard;
         }
     }
@@ -51,7 +62,19 @@ public class SpaceshipMovement : MovementController
         {
             Vector3 input = Vector3.zero;
             input += new Vector3(-Input.GetAxis("Forward/Backward"), Input.GetAxis("Left/Right"), Input.GetAxis("Clockwise/Counterclockwise"));
-            input += new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, -(roll.Input.x + roll.Input.y));
+            
+            input += new Vector3(-pitchAndYaw.Input.y, pitchAndYaw.Input.x, 0);
+
+            if (speedAndRoll != null)
+            {
+                input += new Vector3(0, 0, -speedAndRoll.Input.x);
+            }
+            if (roll != null)
+            {
+                input += new Vector3(0, 0, -(roll.Input.x + roll.Input.y));
+            }
+
+
             if (gyroControls != null && gyroControls.enabled)
             {
                 input += gyroControls.Values;
