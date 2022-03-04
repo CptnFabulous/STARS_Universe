@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
-using Firebase.Database;
+//using Firebase.Database;
 using Firebase.Firestore;
 //using Firebase.Extensions.TaskExtension; // for ContinueWithOnMainThread
 using Firebase.Extensions;
@@ -66,6 +66,9 @@ public class PlanetGenerator : MonoBehaviour
 
     IEnumerator LoadPlanetsFromDatabase()
     {
+        //LoadRandomPlanets();
+        //yield break;
+        
         yield return StartCoroutine(ConnectionTest.GetStatus());
         if (forceRandomPlanetGeneration || ConnectionTest.successfulOnLastCheck == false)
         {
@@ -92,8 +95,9 @@ public class PlanetGenerator : MonoBehaviour
         {
              LoadRandomPlanets(); // Generate random planets
         }
+        
     }
-
+    
     IEnumerator LoadPlanetsFromSnapshot(QuerySnapshot snapshot)
     {
         //Debug.Log("New snapshot (length: " + snapshot.Count + ")");
@@ -141,6 +145,7 @@ public class PlanetGenerator : MonoBehaviour
 
         generationComplete = true;
     }
+    
     void LoadRandomPlanets()
     {
         Debug.Log("Obtaining snapshot failed");
@@ -161,15 +166,6 @@ public class PlanetGenerator : MonoBehaviour
 
         generationComplete = true;
     }
-    /*
-    public static IEnumerator CheckInternetConnection(out bool successful, string testURL = "http://google.com")
-    {
-        if (Application.internetReachability == NetworkReachability.)
-
-        WWW webTest = new WWW(testURL);
-        yield return WaitUntil
-    }
-    */
 
 
     Vector3 RandomPosition()
