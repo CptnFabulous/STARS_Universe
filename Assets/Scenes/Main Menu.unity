@@ -332,7 +332,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8190055811423574718, guid: 328b634b15682614285886271b11cc14, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadSceneSimply
+      value: LoadScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 8190055811423574718, guid: 328b634b15682614285886271b11cc14, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MenuHandler, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8190055811423574718, guid: 328b634b15682614285886271b11cc14, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument

@@ -80,7 +80,11 @@ public class MenuHandler : MonoBehaviour
     public void LoadSceneSimply(string name)
     {
         //SceneManager.LoadScene(name);
-        LoadingScreen.LoadScene(name);
+        LoadingScreen.LoadScene(name, false);
+    }
+    public void LoadScene(string name)
+    {
+        LoadingScreen.LoadScene(name, true);
     }
 
     public void ResetTime(float scale)

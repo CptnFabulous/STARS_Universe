@@ -11,10 +11,12 @@ public class LoadingScreen : MonoBehaviour
     static string sceneToLoad;
     static List<System.Func<bool>> criteriaToFinish = new List<System.Func<bool>>();
     static int criteriaCompleted;
+    static bool allowSetupFunctions;
 
-    public static void LoadScene(string newScene, string loadingScreenScene = "Loading Screen")
+    public static void LoadScene(string newScene, bool allowForSetupFunctions, string loadingScreenScene = "Loading Screen")
     {
         sceneToLoad = newScene;
+        allowSetupFunctions = allowForSetupFunctions;
         SceneManager.LoadSceneAsync(loadingScreenScene);
     }
 
@@ -57,18 +59,24 @@ public class LoadingScreen : MonoBehaviour
         {
             sceneToLoad = defaultMenuIfNoneIsSpecified;
         }
-
         newSceneName.text = sceneToLoad;
 
-        //StartCoroutine(SceneLoadSequence());
-        StartCoroutine(LoadSceneAndInitialProcesses());
+        if (allowSetupFunctions)
+        {
+            StartCoroutine(LoadSceneAndInitialProcesses());
+        }
+        else
+        {
+            StartCoroutine(SimpleSceneLoadSequence());
+        }
     }
-
-
-
     private void LateUpdate()
     {
-        float visibleLoadValue = Mathf.Clamp01(load.progress / 0.9f);
+        float visibleLoadValue = 0;
+        if (load != null)
+        {
+            visibleLoadValue = Mathf.Clamp01(load.progress / 0.9f);
+        }
 
 
         visibleLoadValue *= 0.5f;
@@ -95,6 +103,8 @@ public class LoadingScreen : MonoBehaviour
 
         yield return new WaitUntil(() => load.isDone);
 
+
+
         // Eliminate/disable players and immediately pause game
         GameStateHandler[] players = FindObjectsOfType<GameStateHandler>();
         for (int i = 0; i < players.Length; i++)
@@ -112,7 +122,7 @@ public class LoadingScreen : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Wait until all criteria in 'criteriaToFinish' are true
+        #region Wait until all criteria in 'criteriaToFinish' are true
         yield return new WaitUntil(() =>
         {
             int completed = 0;
@@ -127,14 +137,16 @@ public class LoadingScreen : MonoBehaviour
             return criteriaCompleted >= criteriaToFinish.Count;
         });
         criteriaToFinish.Clear(); // Once check has finished, reset criteria
+        #endregion
 
-        // Now that all processes are finished, wait until player presses the button to load the scene
+        #region Now that all processes are finished, wait until player presses the button to load the scene
         enterLevelButton.gameObject.SetActive(true);
         enterLevelButton.interactable = true;
         onLoadFinished.Invoke();
         yield return new WaitUntil(() => readyToEnterNewLevel == true);
+        #endregion
 
-        // Unpause game and re-enable players
+        #region Unpause game and re-enable game elements
         Time.timeScale = 1;
         for (int i = 0; i < players.Length; i++)
         {
@@ -142,6 +154,7 @@ public class LoadingScreen : MonoBehaviour
         }
 
         Debug.Log("Unloading old level: " + oldLevel.name);
+        #endregion
         SceneManager.UnloadSceneAsync(oldLevel);
 
         Debug.Log("Level processes finished, resuming control on frame " + Time.frameCount);
