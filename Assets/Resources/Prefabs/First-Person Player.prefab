@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 6871411604949637551}
   - component: {fileID: 6840473421566843863}
   - component: {fileID: 6865684279786321767}
-  - component: {fileID: 6894301150761651389}
   - component: {fileID: 6848403658866450667}
   m_Layer: 8
   m_Name: First-Person Player
@@ -205,15 +204,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!45 &6894301150761651389
-Skybox:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6848403658866450665}
-  m_Enabled: 1
-  m_CustomSkybox: {fileID: 2100000, guid: 7d02f0d1e65b0b544b2abbfd5de28d0b, type: 2}
 --- !u!54 &6848403658866450667
 Rigidbody:
   m_ObjectHideFlags: 0
