@@ -608,7 +608,7 @@ RectTransform:
   m_GameObject: {fileID: 7533977824400920390}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5093827061920676579}
   - {fileID: 5147417177853565327}
@@ -1493,6 +1493,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7533977824400920389}
     m_Modifications:
+    - target: {fileID: 217686356727260649, guid: 328b634b15682614285886271b11cc14, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2798722512065038553, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     - target: {fileID: 8190055811423574716, guid: 328b634b15682614285886271b11cc14, type: 3}
       propertyPath: m_Name
       value: Apply
@@ -1581,10 +1585,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8190055811423574719, guid: 328b634b15682614285886271b11cc14, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -2798722512065038553, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328b634b15682614285886271b11cc14, type: 3}
 --- !u!224 &3966541988158976245 stripped
@@ -2315,6 +2315,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7533977824400920389}
     m_Modifications:
+    - target: {fileID: 217686356727260649, guid: 328b634b15682614285886271b11cc14, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2619353076444202031, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     - target: {fileID: 8190055811423574716, guid: 328b634b15682614285886271b11cc14, type: 3}
       propertyPath: m_Name
       value: Return
@@ -2427,10 +2431,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 8190055811423574719, guid: 328b634b15682614285886271b11cc14, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -2619353076444202031, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328b634b15682614285886271b11cc14, type: 3}
 --- !u!224 &1529683867847963572 stripped
@@ -2445,6 +2445,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7533977824400920389}
     m_Modifications:
+    - target: {fileID: 217686356727260649, guid: 328b634b15682614285886271b11cc14, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2826641017216925116, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     - target: {fileID: 8190055811423574716, guid: 328b634b15682614285886271b11cc14, type: 3}
       propertyPath: m_Name
       value: Revert
@@ -2533,10 +2537,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8190055811423574719, guid: 328b634b15682614285886271b11cc14, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -2826641017216925116, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328b634b15682614285886271b11cc14, type: 3}
 --- !u!224 &840601517956013215 stripped

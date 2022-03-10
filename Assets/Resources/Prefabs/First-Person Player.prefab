@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 6894301150761651389}
   - component: {fileID: 6848403658866450667}
   m_Layer: 8
-  m_Name: Player
+  m_Name: First-Person Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ MonoBehaviour:
   headsUpDisplay: {fileID: 6635073554870978509}
   pauseMenu: {fileID: 8780304783588308362}
   pauseButton: {fileID: 5935991838601747569}
-  resumeButton: {fileID: 8780304783607626703}
+  resumeButton: {fileID: 5523848583861604002}
 --- !u!114 &6848403658866450664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,6 +441,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6854393137900040865}
     m_Modifications:
+    - target: {fileID: 422003345888857165, guid: 03f98bebdc4db0b4a84e0411ecdffe3e, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1703540223451798642, guid: 03f98bebdc4db0b4a84e0411ecdffe3e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -553,9 +557,9 @@ Canvas:
   m_CorrespondingSourceObject: {fileID: 1703540223451798645, guid: 03f98bebdc4db0b4a84e0411ecdffe3e, type: 3}
   m_PrefabInstance: {fileID: 7961757625406630399}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8780304783607626703 stripped
+--- !u!114 &5523848583861604002 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1703540223403020848, guid: 03f98bebdc4db0b4a84e0411ecdffe3e, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2510052442050340701, guid: 03f98bebdc4db0b4a84e0411ecdffe3e, type: 3}
   m_PrefabInstance: {fileID: 7961757625406630399}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
