@@ -113,7 +113,6 @@ public class LoadingScreen : MonoBehaviour
             players[i].gameObject.SetActive(false);
         }
 
-        Debug.Log("Letting processes finish before enabling player control, on frame " + Time.frameCount);
 
         // Waits for objects in the new scene to start running functions that need to occur before entering the level properly
         yield return new WaitForEndOfFrame();
@@ -153,11 +152,9 @@ public class LoadingScreen : MonoBehaviour
             players[i].gameObject.SetActive(true);
         }
 
-        Debug.Log("Unloading old level: " + oldLevel.name);
         #endregion
         SceneManager.UnloadSceneAsync(oldLevel);
 
-        Debug.Log("Level processes finished, resuming control on frame " + Time.frameCount);
     }
     IEnumerator SimpleSceneLoadSequence()
     {

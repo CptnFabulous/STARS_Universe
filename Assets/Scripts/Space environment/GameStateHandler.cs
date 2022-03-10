@@ -111,9 +111,6 @@ public class GameStateHandler : MonoBehaviour
             playerHandler.controls.SetControlsToComputerOrMobile();
         }
 
-        Debug.Log("Resuming game");
-        
-
         CurrentState = PlayerState.Active;
 
         #region Time adjustment

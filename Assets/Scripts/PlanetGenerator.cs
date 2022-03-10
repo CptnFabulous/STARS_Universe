@@ -140,7 +140,6 @@ public class PlanetGenerator : MonoBehaviour
 
             GeneratePlanet(name, position, rotation, size, shapeIndex, materialIndex, retrievedColour, texture);
 
-            Debug.Log("Loaded planet #" + (i + 1) + " out of " + snapshot.Count + " on frame " + Time.frameCount);
         }
 
         generationComplete = true;
@@ -148,7 +147,6 @@ public class PlanetGenerator : MonoBehaviour
     
     void LoadRandomPlanets()
     {
-        Debug.Log("Obtaining snapshot failed");
 
         for (int i = 0; i < randomPlanetCount; i++)
         {
