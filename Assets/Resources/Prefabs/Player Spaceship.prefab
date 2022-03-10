@@ -3022,10 +3022,6 @@ PrefabInstance:
       propertyPath: m_Navigation.m_SelectOnLeft
       value: 
       objectReference: {fileID: 1701000172774334189}
-    - target: {fileID: 8190055811423574719, guid: 328b634b15682614285886271b11cc14, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -8316431317830077611, guid: a1d5025544aea1c4e9f5f0fed7a13950, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 328b634b15682614285886271b11cc14, type: 3}
 --- !u!114 &4032044514759843277 stripped
