@@ -33,6 +33,9 @@ public class GameStateHandler : MonoBehaviour
         // Adds listeners so the buttons work properly
         pauseButton.onClick.AddListener(PauseGame);
         resumeButton.onClick.AddListener(ResumeGame);
+    }
+    private void Start()
+    {
         // Pre-emptively resumes the game to ensure everything is set up correctly
         ResumeGame();
     }
