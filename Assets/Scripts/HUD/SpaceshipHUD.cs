@@ -15,8 +15,6 @@ public class SpaceshipHUD : MonoBehaviour
 
     private void LateUpdate()
     {
-        //speedometer.text = MiscMath.RoundToDecimalPlaces(rb.velocity.magnitude, 1) + "km/h";
         speedometer.text = Mathf.RoundToInt(controller.rb.velocity.magnitude) + speedMeasurement;
-
     }
 }

@@ -26,6 +26,7 @@ public class PlanetGenerator : MonoBehaviour
     public float maxDistanceFromCentre = 950;
     public float minScale = 50;
     public float maxScale = 200;
+    public Collider[] exclusionZones;
 
     [Header("If random")]
     public int randomPlanetCount = 100;
@@ -200,5 +201,47 @@ public class PlanetGenerator : MonoBehaviour
         renderer.material = materialTypes[materialIndex];
         renderer.material.color = planetColour;
         renderer.material.mainTexture = texture;
+
+        // Check exclusion zones to ensure planets do not clip into them
+        for (int i = 0; i < exclusionZones.Length; i++)
+        {
+            if (exclusionZones[i].bounds.Intersects(collider.bounds))
+            {
+                Vector3 offset = collider.bounds.center - exclusionZones[i].bounds.center;
+                offset = offset.normalized * (exclusionZones[i].bounds.extents.magnitude + collider.bounds.extents.magnitude);
+                newPlanet.transform.position = exclusionZones[i].bounds.center + offset;
+            }
+        }
     }
+
+    /*
+    public static void DebugDrawWireCube(Vector3 centre, Vector3 halfExtents, Quaternion rotation = Quaternion.identity)
+    {
+        Vector3 min = centre - halfExtents;
+        Vector3 max = centre + halfExtents;
+        DebugDrawWireCube(min, max, rotation);
+    }
+
+    public static void DebugDrawWireCube(Vector3 min, Vector3 max, Quaternion rotation = Quaternion.identity)
+    {
+        Vector3[] minAndMax = new Vector3[] { min, max };
+        
+        Vector3[,,] corners = new Vector3[2, 2, 2];
+        for (int x = 0; x < 2; x++)
+        {
+            for (int y = 0; y < 2; y++)
+            {
+                for (int z = 0; z < 2; z++)
+                {
+                    corners[x, y, z] = new Vector3(minAndMax[x].x, minAndMax[y].y, minAndMax[z].z);
+                }
+            }
+        }
+
+
+
+        
+        Debug.DrawLine(min, )
+    }
+    */
 }
