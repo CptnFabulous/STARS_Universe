@@ -278,7 +278,7 @@ MonoBehaviour:
   movementBrake: {fileID: 3158396809914003485}
   rotationBrake: {fileID: 1382217560346609870}
   gyroControls: {fileID: 386702565512495435}
-  forwardSpeed: 500
+  forwardSpeed: 250
   reverseSpeed: 0
   acceleration: 125
   deceleration: 125
